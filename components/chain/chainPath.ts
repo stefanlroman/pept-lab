@@ -3,19 +3,24 @@ import { peptides } from "@/lib/peptides";
 
 export const CHAIN_LENGTH = peptides.length;
 
-// One waypoint per peptide, drifting gently through depth (z) so the
-// camera can fly along the whole backbone as the user scrolls through
-// the section. Kept deliberately low-frequency/low-curvature: the double
-// helix twisting tightly around this line already reads as intricate —
-// if the CENTERLINE itself also whips around sharply, no simple chase
-// camera can keep up, since "forward" changes faster than any fixed
-// look-ahead distance can track.
+// One waypoint per peptide, travelling mainly left-to-right (x) with only
+// a gentle drift in height/depth — a side-on tracking shot rather than a
+// tunnel flying away from the camera. A straight-ahead flythrough crowds
+// every node toward the same vanishing point on screen; spreading the
+// path across x instead gives each one its own, evenly spaced slot.
+// Kept deliberately low-frequency/low-curvature: the double helix
+// twisting tightly around this line already reads as intricate — if the
+// CENTERLINE itself also whips around sharply, no simple tracking camera
+// can keep up, since "forward" changes faster than any fixed look-ahead
+// distance can track.
+const SPAN_X = 42;
+
 function buildWaypoints(): THREE.Vector3[] {
   return peptides.map((_, i) => {
     const t = i / (CHAIN_LENGTH - 1);
-    const x = Math.sin(t * Math.PI * 1.1) * 5;
-    const y = Math.cos(t * Math.PI * 0.8) * 2.5;
-    const z = -t * 46;
+    const x = (t - 0.5) * SPAN_X;
+    const y = Math.sin(t * Math.PI * 3.2) * 1.6;
+    const z = Math.cos(t * Math.PI * 2.4) * 2.2;
     return new THREE.Vector3(x, y, z);
   });
 }

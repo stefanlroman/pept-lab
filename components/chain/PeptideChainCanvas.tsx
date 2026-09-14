@@ -257,22 +257,17 @@ function CameraRig({ progressRef }: { progressRef: { current: number } }) {
     // more so direction changes don't snap.
     smoothed.current += (progressRef.current - smoothed.current) * 0.08;
     const p = THREE.MathUtils.clamp(smoothed.current, 0, 1) * 0.92;
+    const point = curve.getPointAt(p);
 
-    // The camera's offset is anchored to the SAME point it's currently
-    // "at" (p), and the look-at target is a real point further along the
-    // arc-length-parametrized curve (p + lookAhead) rather than a linear
-    // extrapolation along the tangent — this path winds tightly enough
-    // that a straight-line guess diverges from where it actually goes
-    // within just a couple of units.
-    const { point, normal, binormal } = frameAt(curve, p);
-    const aheadPoint = curve.getPointAt(Math.min(p + 0.09, 1));
-
-    camera.position
-      .copy(point)
-      .addScaledVector(normal, 1.1)
-      .addScaledVector(binormal, 0.5);
+    // A side-on tracking shot rather than a first-person flythrough: the
+    // camera keeps a fixed world-space offset (pulled back in depth,
+    // slightly above) and pans across x as the current point moves,
+    // instead of embedding itself in the curve's own frame and flying
+    // toward a vanishing point. That's what actually spreads consecutive
+    // nodes out left-to-right on screen instead of bunching them up.
+    camera.position.set(point.x, point.y + 1.5, point.z + 7.5);
     camera.up.set(0, 1, 0);
-    camera.lookAt(aheadPoint);
+    camera.lookAt(point.x, point.y, point.z);
   });
 
   return null;
