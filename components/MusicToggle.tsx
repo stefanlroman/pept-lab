@@ -24,7 +24,7 @@ export default function MusicToggle() {
 
   return (
     <>
-      <audio ref={audioRef} loop preload="none" src={`${basePath}/audio/ambient-chill.mp3`} />
+      <audio ref={audioRef} loop preload="none" src={`${basePath}/audio/melodic-techno-journey.mp3`} />
       <button
         onClick={toggle}
         aria-label={isPlaying ? "Musik stumm schalten" : "Musik abspielen"}
