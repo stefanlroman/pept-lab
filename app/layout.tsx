@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import MusicToggle from "@/components/MusicToggle";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,6 +39,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} ${bricolage.variable} antialiased`}
       >
+        <LoadingScreen />
         <CartProvider>
           <div className="ambient-glow" />
           <div className="noise" />

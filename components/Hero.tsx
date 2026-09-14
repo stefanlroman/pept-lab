@@ -73,6 +73,7 @@ export default function Hero() {
         muted
         loop
         playsInline
+        preload="auto"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-bg/70 to-bg" />
 
