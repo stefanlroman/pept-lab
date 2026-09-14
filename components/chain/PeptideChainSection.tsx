@@ -94,10 +94,7 @@ export default function PeptideChainSection() {
     return (
       <section className="relative border-y border-line px-6 py-24 sm:px-10">
         <div className="mx-auto max-w-3xl text-center">
-          <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-            Die Peptidkette
-          </span>
-          <h2 className="font-display mt-3 text-3xl sm:text-4xl">
+          <h2 className="font-display text-3xl sm:text-4xl">
             24 Aminosäureketten, eine durchgehende Struktur
           </h2>
           <p className="mt-4 font-sans text-sm text-fg-muted">
@@ -108,9 +105,9 @@ export default function PeptideChainSection() {
           {!noWebgl && prefersReducedMotion && (
             <button
               onClick={() => setForceShow(true)}
-              className="mt-6 rounded-full border border-line px-6 py-3 font-mono text-xs uppercase tracking-widest transition-colors hover:border-accent hover:text-accent"
+              className="mt-6 rounded-full border border-line px-6 py-3 font-sans text-sm transition-colors hover:border-accent hover:text-accent"
             >
-              Trotzdem anzeigen →
+              Trotzdem anzeigen
             </button>
           )}
         </div>
@@ -147,7 +144,7 @@ export default function PeptideChainSection() {
         >
           <div ref={panelRef}>
             <span
-              className="font-mono text-[11px] uppercase tracking-widest transition-colors duration-300"
+              className="font-sans text-sm font-medium transition-colors duration-300"
               style={{ color: accent }}
             >
               {categoryLabel}
@@ -155,11 +152,11 @@ export default function PeptideChainSection() {
             <h3 className="font-display mt-2 text-3xl text-fg sm:text-4xl">
               {active.name}
             </h3>
-            <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
+            <p className="mt-1 font-sans text-sm text-fg-muted">
               {active.tagline}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-fg-muted transition-colors group-hover:text-fg">
-              Zum Peptid →
+              Zum Peptid
             </span>
           </div>
         </Link>

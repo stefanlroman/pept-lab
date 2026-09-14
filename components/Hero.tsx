@@ -79,9 +79,9 @@ export default function Hero() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-bg/70 to-bg" />
 
-        <div className="hero-meta relative mb-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
+        <div className="hero-meta relative mb-6 flex items-center gap-3 font-sans text-sm text-fg-muted">
           <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
-          24 Forschungspeptide · Laborqualität ≥ 98 % Reinheit
+          24 Forschungspeptide in Laborqualität, jedes ≥ 98 % Reinheit
         </div>
 
         <h1 className="font-display relative max-w-4xl text-[13vw] font-medium leading-[0.92] tracking-tight sm:text-[7.5vw]">
@@ -89,7 +89,7 @@ export default function Hero() {
             <span className="inline-block">Die</span>
           </span>
           <span className="hero-line block overflow-hidden">
-            <span className="inline-block text-accent">Bausteine</span>
+            <span className="inline-block">Bausteine</span>
           </span>
           <span className="hero-line block overflow-hidden">
             <span className="inline-block">des Lebens.</span>
@@ -104,10 +104,9 @@ export default function Hero() {
 
         <a
           href="#kette"
-          className="hero-scroll relative mt-16 flex w-fit items-center gap-3 rounded-full bg-accent px-7 py-3 font-mono text-xs uppercase tracking-widest text-bg transition-transform hover:scale-105"
+          className="hero-scroll relative mt-16 flex w-fit items-center rounded-full bg-accent px-7 py-3 font-sans text-sm font-medium text-bg transition-transform hover:scale-105"
         >
           Start
-          <span aria-hidden="true">→</span>
         </a>
 
         <div className="pointer-events-none absolute bottom-0 left-0 w-full overflow-hidden border-t border-line py-3">

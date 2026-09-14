@@ -6,6 +6,7 @@ import {
   getPeptideBySlug,
   getRelatedPeptides,
   categories,
+  categoryColors,
   formatPrice,
 } from "@/lib/peptides";
 import AddToCartButton from "@/components/AddToCartButton";
@@ -47,7 +48,7 @@ export default async function PeptidePage({
       <div className="mx-auto max-w-5xl">
         <Link
           href="/#katalog"
-          className="font-mono text-[11px] uppercase tracking-widest text-fg-muted hover:text-accent"
+          className="font-sans text-sm text-fg-muted hover:text-accent"
         >
           ← Zurück zum Katalog
         </Link>
@@ -65,14 +66,17 @@ export default async function PeptidePage({
               />
             </div>
 
-            <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
+            <span
+              className="font-sans text-sm font-medium"
+              style={{ color: categoryColors[peptide.category] }}
+            >
               {categoryLabel}
             </span>
             <h1 className="font-display mt-3 text-4xl sm:text-5xl">
               {peptide.name}
             </h1>
             {peptide.aliases && (
-              <p className="mt-2 font-mono text-sm text-fg-muted">
+              <p className="mt-2 font-sans text-sm text-fg-muted">
                 {peptide.aliases}
               </p>
             )}
@@ -81,7 +85,7 @@ export default async function PeptidePage({
             </p>
 
             <div className="mt-10">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-fg-muted">
+              <span className="font-sans text-sm text-fg-muted">
                 Forschungsschwerpunkte
               </span>
               <ul className="mt-4 flex flex-col gap-3">
@@ -105,12 +109,12 @@ export default async function PeptidePage({
               <span className="font-display text-3xl">
                 {formatPrice(peptide.price)}
               </span>
-              <span className="font-mono text-xs uppercase tracking-widest text-fg-muted">
+              <span className="font-mono text-xs text-fg-muted">
                 {peptide.vial} / Vial
               </span>
             </div>
             <p className="mt-2 font-mono text-[11px] text-fg-muted">
-              Reinheit ≥ 98 % · HPLC-verifiziert
+              HPLC-verifizierte Reinheit ≥ 98 %
             </p>
             <p className="mt-1 font-mono text-[11px] text-fg-muted">
               Darreichungsform: {peptide.form}
@@ -120,7 +124,7 @@ export default async function PeptidePage({
               <AddToCartButton peptide={peptide} />
             </div>
 
-            <p className="mt-6 border-t border-line pt-5 font-mono text-[10px] leading-relaxed text-fg-muted">
+            <p className="mt-6 border-t border-line pt-5 font-sans text-xs leading-relaxed text-fg-muted">
               Ausschließlich für Forschungs- und Laborzwecke. Kein
               Arzneimittel. Nicht für den menschlichen oder tierischen
               Verzehr bestimmt. Verkauf nur an gewerbliche und

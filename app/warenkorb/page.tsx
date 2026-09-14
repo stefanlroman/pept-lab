@@ -16,10 +16,7 @@ export default function WarenkorbPage() {
   if (placed) {
     return (
       <div className="flex min-h-svh flex-col items-center justify-center px-6 pt-24 text-center">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Anfrage übermittelt
-        </span>
-        <h1 className="font-display mt-4 max-w-lg text-3xl sm:text-4xl">
+        <h1 className="font-display max-w-lg text-3xl sm:text-4xl">
           Danke, {form.name.split(" ")[0] || "für deine Bestellung"}.
         </h1>
         <p className="mt-4 max-w-md font-sans text-sm text-fg-muted">
@@ -29,7 +26,7 @@ export default function WarenkorbPage() {
         </p>
         <Link
           href="/"
-          className="mt-8 rounded-full border border-line px-6 py-3 font-mono text-xs uppercase tracking-widest hover:border-accent hover:text-accent"
+          className="mt-8 rounded-full border border-line px-6 py-3 font-sans text-sm hover:border-accent hover:text-accent"
         >
           Zurück zum Katalog
         </Link>
@@ -40,19 +37,16 @@ export default function WarenkorbPage() {
   return (
     <div className="px-6 pb-24 pt-32 sm:px-10">
       <div className="mx-auto max-w-5xl">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Checkout
-        </span>
-        <h1 className="font-display mt-3 text-4xl">Warenkorb</h1>
+        <h1 className="font-display text-4xl">Warenkorb</h1>
 
         {items.length === 0 ? (
           <div className="mt-12 rounded-2xl border border-line bg-bg-elevated/40 p-10 text-center">
-            <p className="font-mono text-sm text-fg-muted">
+            <p className="font-sans text-sm text-fg-muted">
               Dein Warenkorb ist leer.
             </p>
             <Link
               href="/#katalog"
-              className="mt-6 inline-block rounded-full bg-accent px-6 py-3 font-mono text-xs uppercase tracking-widest text-bg hover:opacity-90"
+              className="mt-6 inline-block rounded-full bg-accent px-6 py-3 font-sans text-sm font-medium text-bg hover:opacity-90"
             >
               Katalog durchsuchen
             </Link>
@@ -74,7 +68,7 @@ export default function WarenkorbPage() {
                         {item.name}
                       </Link>
                       <p className="font-mono text-[11px] text-fg-muted">
-                        Vial {item.vial} · {formatPrice(item.price)} / Stk.
+                        Vial {item.vial}, {formatPrice(item.price)} / Stk.
                       </p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -115,7 +109,7 @@ export default function WarenkorbPage() {
               </ul>
               <button
                 onClick={clearCart}
-                className="mt-4 font-mono text-[11px] uppercase tracking-widest text-fg-muted hover:text-accent-warm"
+                className="mt-4 font-sans text-sm text-fg-muted hover:text-accent-warm"
               >
                 Warenkorb leeren
               </button>
@@ -170,7 +164,7 @@ export default function WarenkorbPage() {
                 />
               </div>
 
-              <label className="mt-4 flex items-start gap-2 font-mono text-[11px] leading-relaxed text-fg-muted">
+              <label className="mt-4 flex items-start gap-2 font-sans text-xs leading-relaxed text-fg-muted">
                 <input required type="checkbox" className="mt-0.5" />
                 Ich bestätige, dass ich diese Produkte ausschließlich für
                 Forschungszwecke erwerbe und nicht für den menschlichen oder
@@ -179,11 +173,11 @@ export default function WarenkorbPage() {
 
               <button
                 type="submit"
-                className="mt-6 w-full rounded-full bg-accent py-3.5 font-mono text-xs uppercase tracking-widest text-bg hover:opacity-90"
+                className="mt-6 w-full rounded-full bg-accent py-3.5 font-sans text-sm font-medium text-bg hover:opacity-90"
               >
                 Bestellung abschließen
               </button>
-              <p className="mt-3 text-center font-mono text-[10px] text-fg-muted">
+              <p className="mt-3 text-center font-sans text-xs text-fg-muted">
                 Demo-Checkout ohne echte Zahlungsabwicklung.
               </p>
             </form>

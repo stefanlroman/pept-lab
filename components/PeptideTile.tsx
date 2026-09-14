@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Peptide, formatPrice } from "@/lib/peptides";
+import { Peptide, formatPrice, categoryColors } from "@/lib/peptides";
 import { basePath } from "@/lib/basePath";
 
 const badgeColor: Record<string, string> = {
@@ -30,13 +30,6 @@ export default function PeptideTile({
           className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-bg-elevated via-bg-elevated/10 to-transparent" />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          style={{
-            background:
-              "radial-gradient(240px circle at var(--x,50%) var(--y,50%), rgba(121,255,199,0.18), transparent 70%)",
-          }}
-        />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
           <span className="font-mono text-[11px] text-fg-muted">
             {String(index + 1).padStart(2, "0")}
@@ -57,11 +50,14 @@ export default function PeptideTile({
         <h3 className="font-display text-xl leading-tight transition-colors group-hover:text-accent sm:text-2xl">
           {peptide.name}
         </h3>
-        <p className="mt-2 font-mono text-[11px] uppercase tracking-wide text-fg-muted">
+        <p
+          className="mt-2 font-sans text-sm"
+          style={{ color: categoryColors[peptide.category] }}
+        >
           {peptide.tagline}
         </p>
         <div className="mt-4 flex items-center justify-between border-t border-line pt-3">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-fg-muted">
+          <span className="font-mono text-[11px] text-fg-muted">
             {peptide.vial}
           </span>
           <span className="font-mono text-sm text-fg">

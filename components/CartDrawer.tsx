@@ -36,7 +36,7 @@ export default function CartDrawer() {
 
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {items.length === 0 ? (
-            <p className="mt-10 text-center font-mono text-xs uppercase tracking-widest text-fg-muted">
+            <p className="mt-10 text-center font-sans text-sm text-fg-muted">
               Dein Warenkorb ist leer
             </p>
           ) : (
@@ -91,7 +91,7 @@ export default function CartDrawer() {
                     </span>
                     <button
                       onClick={() => removeItem(item.slug)}
-                      className="font-mono text-[10px] uppercase tracking-widest text-fg-muted hover:text-accent-warm"
+                      className="font-sans text-xs text-fg-muted hover:text-accent-warm"
                     >
                       Entfernen
                     </button>
@@ -110,7 +110,7 @@ export default function CartDrawer() {
           <Link
             href="/warenkorb"
             onClick={closeCart}
-            className={`block w-full rounded-full bg-accent py-3 text-center font-mono text-xs uppercase tracking-widest text-bg transition-opacity ${
+            className={`block w-full rounded-full bg-accent py-3 text-center font-sans text-sm font-medium text-bg transition-opacity ${
               items.length === 0 ? "pointer-events-none opacity-40" : "hover:opacity-90"
             }`}
           >

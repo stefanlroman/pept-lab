@@ -24,10 +24,7 @@ export default function GoalQuiz() {
   return (
     <section className="relative border-y border-line px-6 py-24 sm:px-10">
       <div className="mx-auto max-w-6xl">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Finde deinen Fokus
-        </span>
-        <h2 className="font-display mt-3 max-w-xl text-3xl sm:text-4xl">
+        <h2 className="font-display max-w-xl text-3xl sm:text-4xl">
           Worauf legst du bei deiner Forschung Wert?
         </h2>
         <p className="mt-3 max-w-md font-sans text-sm text-fg-muted">
@@ -67,7 +64,7 @@ export default function GoalQuiz() {
 
         <div className="mt-14">
           {matches.length === 0 ? (
-            <p className="font-mono text-xs uppercase tracking-widest text-fg-muted">
+            <p className="font-sans text-sm text-fg-muted">
               {selected.length === 0
                 ? "Noch keine Auswahl — tippe auf ein Feld oben."
                 : "Keine passenden Peptide gefunden."}
@@ -75,15 +72,15 @@ export default function GoalQuiz() {
           ) : (
             <>
               <div className="mb-5 flex items-end justify-between">
-                <span className="font-mono text-[11px] uppercase tracking-widest text-fg-muted">
+                <span className="font-sans text-sm text-fg-muted">
                   {matches.length} passende{" "}
                   {matches.length === 1 ? "Peptid" : "Peptide"}
                 </span>
                 <a
                   href="#katalog"
-                  className="font-mono text-[11px] uppercase tracking-widest text-accent hover:underline"
+                  className="font-sans text-sm text-accent hover:underline"
                 >
-                  Ganzer Katalog →
+                  Ganzer Katalog
                 </a>
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

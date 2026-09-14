@@ -4,10 +4,7 @@ export default function DatenschutzPage() {
   return (
     <div className="px-6 pb-24 pt-32 sm:px-10">
       <div className="mx-auto max-w-2xl">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Rechtliches
-        </span>
-        <h1 className="font-display mt-3 text-4xl">Datenschutzerklärung</h1>
+        <h1 className="font-display text-4xl">Datenschutzerklärung</h1>
         <p className="mt-6 rounded-xl border border-accent-dim/40 bg-bg-elevated/40 p-5 font-mono text-xs leading-relaxed text-fg-muted">
           Platzhalter-Seite. Diese Vorlage ersetzt keine rechtliche Beratung.
           Erstelle vor dem Livegang eine vollständige, DSGVO-konforme

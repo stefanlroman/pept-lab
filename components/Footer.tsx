@@ -10,7 +10,7 @@ export default function Footer() {
             <Logo className="h-6 w-6 text-accent" />
             PEPT<span className="text-accent">.</span>LAB
           </p>
-          <p className="mt-3 font-mono text-xs leading-relaxed text-fg-muted">
+          <p className="mt-3 font-sans text-sm leading-relaxed text-fg-muted">
             Forschungspeptide für Labore, Institute und wissenschaftliche
             Anwender. Ausschließlich für In-vitro- und präklinische
             Forschungszwecke – nicht für den menschlichen oder tierischen
@@ -20,10 +20,8 @@ export default function Footer() {
 
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
           <div>
-            <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
-              Shop
-            </p>
-            <ul className="flex flex-col gap-2 font-mono text-xs">
+            <p className="mb-3 font-sans text-sm font-medium text-fg">Shop</p>
+            <ul className="flex flex-col gap-2 font-sans text-sm text-fg-muted">
               <li>
                 <Link href="/#katalog" className="hover:text-accent">
                   Katalog
@@ -42,10 +40,10 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
+            <p className="mb-3 font-sans text-sm font-medium text-fg">
               Rechtliches
             </p>
-            <ul className="flex flex-col gap-2 font-mono text-xs">
+            <ul className="flex flex-col gap-2 font-sans text-sm text-fg-muted">
               <li>
                 <Link href="/disclaimer" className="hover:text-accent">
                   Forschungshinweis
@@ -70,7 +68,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <p className="mx-auto mt-14 max-w-6xl font-mono text-[10px] text-fg-muted">
+      <p className="mx-auto mt-14 max-w-6xl font-sans text-xs text-fg-muted">
         © {new Date().getFullYear()} PEPT.LAB — Alle Produkte ausschließlich
         für Forschungszwecke.
       </p>

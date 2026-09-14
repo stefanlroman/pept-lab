@@ -12,9 +12,7 @@ export default function AddToCartButton({ peptide }: { peptide: Peptide }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-fg-muted">
-          Menge
-        </span>
+        <span className="font-sans text-sm text-fg-muted">Menge</span>
         <div className="flex items-center gap-3 rounded-full border border-line px-3 py-1.5">
           <button
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -40,7 +38,7 @@ export default function AddToCartButton({ peptide }: { peptide: Peptide }) {
           setJustAdded(true);
           setTimeout(() => setJustAdded(false), 1600);
         }}
-        className="rounded-full bg-accent px-8 py-3.5 font-mono text-xs uppercase tracking-widest text-bg transition-opacity hover:opacity-90"
+        className="rounded-full bg-accent px-8 py-3.5 font-sans text-sm font-medium text-bg transition-opacity hover:opacity-90"
       >
         {justAdded ? "Hinzugefügt ✓" : "In den Warenkorb"}
       </button>

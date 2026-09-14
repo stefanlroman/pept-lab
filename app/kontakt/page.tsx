@@ -8,17 +8,14 @@ export default function KontaktPage() {
   return (
     <div className="px-6 pb-24 pt-32 sm:px-10">
       <div className="mx-auto max-w-xl">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Kontakt
-        </span>
-        <h1 className="font-display mt-3 text-4xl">Sprich mit uns.</h1>
+        <h1 className="font-display text-4xl">Sprich mit uns.</h1>
         <p className="mt-4 font-sans text-sm text-fg-muted">
           Fragen zu Reinheitszertifikaten, Großmengen oder Kooperationen mit
           Instituten? Schreib uns.
         </p>
 
         {sent ? (
-          <p className="mt-10 rounded-xl border border-line bg-bg-elevated/40 p-6 font-mono text-sm">
+          <p className="mt-10 rounded-xl border border-line bg-bg-elevated/40 p-6 font-sans text-sm">
             Danke — deine Nachricht wurde erfasst (Demo, ohne Versand).
           </p>
         ) : (
@@ -48,7 +45,7 @@ export default function KontaktPage() {
             />
             <button
               type="submit"
-              className="rounded-full bg-accent py-3.5 font-mono text-xs uppercase tracking-widest text-bg hover:opacity-90"
+              className="rounded-full bg-accent py-3.5 font-sans text-sm font-medium text-bg hover:opacity-90"
             >
               Nachricht senden
             </button>

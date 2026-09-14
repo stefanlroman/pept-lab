@@ -17,12 +17,8 @@ export default function AminoAcidExplainer() {
   return (
     <section className="relative border-y border-line px-6 py-24 sm:px-10">
       <div className="mx-auto max-w-5xl">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Grundlagen
-        </span>
-        <h2 className="font-display mt-3 max-w-2xl text-3xl sm:text-4xl">
-          Erst die Aminosäure.{" "}
-          <span className="text-accent">Dann die Funktion.</span>
+        <h2 className="font-display max-w-2xl text-3xl sm:text-4xl">
+          Erst die Aminosäure. Dann die Funktion.
         </h2>
         <p className="mt-4 max-w-xl font-sans text-sm leading-relaxed text-fg-muted sm:text-base">
           Aminosäuren sind die molekularen Bausteine des Lebens. Wer versteht,

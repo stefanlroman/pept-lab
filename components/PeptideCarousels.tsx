@@ -41,10 +41,7 @@ function CategoryRow({ categoryId, label }: { categoryId: Category; label: strin
     <div className="mb-14">
       <div className="mb-5 flex items-end justify-between px-6 sm:px-10">
         <div>
-          <span
-            className="font-mono text-[11px] uppercase tracking-widest"
-            style={{ color: accent }}
-          >
+          <span className="font-sans text-sm font-medium" style={{ color: accent }}>
             {label}
           </span>
           <h3 className="font-display mt-1 text-2xl sm:text-3xl">
@@ -95,10 +92,7 @@ export default function PeptideCarousels() {
   return (
     <section id="katalog" className="relative py-24">
       <div className="mb-12 px-6 sm:px-10">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Katalog
-        </span>
-        <h2 className="font-display mt-2 max-w-xl text-3xl sm:text-4xl">
+        <h2 className="font-display max-w-xl text-3xl sm:text-4xl">
           24 Peptide, nach Anwendung sortiert
         </h2>
         <p className="mt-3 max-w-md font-sans text-sm text-fg-muted">

@@ -35,7 +35,7 @@ export default function Header() {
         <div className="flex items-center gap-1">
           <button
             onClick={openCart}
-            className="relative flex items-center gap-2 rounded-full border border-line px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-fg transition-colors hover:border-accent-dim"
+            className="relative flex items-center gap-2 rounded-full border border-line px-3 py-1.5 font-sans text-sm text-fg transition-colors hover:border-accent-dim"
             aria-label="Warenkorb öffnen"
           >
             Warenkorb
