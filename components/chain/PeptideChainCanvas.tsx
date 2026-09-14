@@ -59,7 +59,13 @@ function ChainEnvironment() {
 // The chain "backbone" itself: a glass sphere at every peptide's position
 // on the curve, connected to its neighbour by a glass rod — a ball-and-
 // stick molecular model, matching the generated product artwork.
-function GlassChain({ activeIndex }: { activeIndex: number }) {
+function GlassChain({
+  activeIndex,
+  lite,
+}: {
+  activeIndex: number;
+  lite: boolean;
+}) {
   const curve = useMemo(() => buildChainCurve(), []);
 
   const points = useMemo(
@@ -71,9 +77,13 @@ function GlassChain({ activeIndex }: { activeIndex: number }) {
   );
 
   const rodGeometry = useMemo(
-    () => new THREE.CylinderGeometry(1, 1, 1, 10, 1, true).rotateX(Math.PI / 2),
-    []
+    () =>
+      new THREE.CylinderGeometry(1, 1, 1, lite ? 6 : 10, 1, true).rotateX(
+        Math.PI / 2
+      ),
+    [lite]
   );
+  const sphereSegments = lite ? 12 : 24;
   const rodRef = useRef<THREE.InstancedMesh>(null);
 
   useEffect(() => {
@@ -122,7 +132,7 @@ function GlassChain({ activeIndex }: { activeIndex: number }) {
           return (
             <group key={i} position={p}>
               <mesh>
-                <sphereGeometry args={[radius, 24, 24]} />
+                <sphereGeometry args={[radius, sphereSegments, sphereSegments]} />
                 <meshPhysicalMaterial
                   color={GLASS_COLOR}
                   emissive={accent}
@@ -161,15 +171,14 @@ function GlassChain({ activeIndex }: { activeIndex: number }) {
 
 // A loose cloud of small golden droplets drifting near the chain — pure
 // atmosphere, echoing the floating particles in the reference artwork.
-const PARTICLE_COUNT = 70;
-
-function GoldParticles() {
+function GoldParticles({ lite }: { lite: boolean }) {
+  const particleCount = lite ? 30 : 70;
   const curve = useMemo(() => buildChainCurve(), []);
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
   const seeds = useMemo(
     () =>
-      Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+      Array.from({ length: particleCount }, (_, i) => {
         const t = hashRand(i * 3 + 1);
         const { point, normal, binormal } = frameAt(curve, t);
         const angle = hashRand(i * 7 + 2) * Math.PI * 2;
@@ -184,7 +193,7 @@ function GoldParticles() {
           scale: 0.03 + hashRand(i * 17 + 5) * 0.07,
         };
       }),
-    [curve]
+    [curve, particleCount]
   );
 
   useFrame(({ clock }) => {
@@ -202,7 +211,7 @@ function GoldParticles() {
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
+    <instancedMesh ref={meshRef} args={[undefined, undefined, particleCount]}>
       <sphereGeometry args={[1, 8, 8]} />
       <meshBasicMaterial color={PARTICLE_COLOR} toneMapped={false} />
     </instancedMesh>
@@ -246,17 +255,22 @@ function CameraRig({ progressRef }: { progressRef: { current: number } }) {
 // effect in the stack and isn't worth the risk of a blank scene on a
 // machine that doesn't like it — bloom alone already carries most of
 // the "photographed" feel.
-function PostFX() {
+// On phones each extra full-screen pass has a real cost, so `lite` keeps
+// only bloom (the effect that most defines the glass look) plus the
+// vignette, and drops the chromatic aberration / grain passes entirely.
+function PostFX({ lite }: { lite: boolean }) {
   return (
     <EffectComposer multisampling={0}>
       <Bloom
         intensity={0.7}
         luminanceThreshold={0.22}
         luminanceSmoothing={0.9}
-        mipmapBlur
+        mipmapBlur={!lite}
       />
-      <ChromaticAberration offset={[0.0006, 0.0009]} radialModulation={false} modulationOffset={0} />
-      <Noise opacity={0.035} />
+      {!lite && (
+        <ChromaticAberration offset={[0.0006, 0.0009]} radialModulation={false} modulationOffset={0} />
+      )}
+      {!lite && <Noise opacity={0.035} />}
       <Vignette eskil={false} offset={0.15} darkness={0.9} />
     </EffectComposer>
   );
@@ -265,14 +279,16 @@ function PostFX() {
 export default function PeptideChainCanvas({
   progressRef,
   activeIndex,
+  lite,
 }: {
   progressRef: { current: number };
   activeIndex: number;
+  lite: boolean;
 }) {
   return (
     <Canvas
-      dpr={[1, 1.5]}
-      gl={{ antialias: true, alpha: false }}
+      dpr={lite ? 1 : [1, 1.5]}
+      gl={{ antialias: !lite, alpha: false }}
       camera={{ fov: 68, near: 0.1, far: 100, position: [0, 0, 6] }}
       onCreated={({ scene }) => {
         scene.fog = new THREE.Fog(new THREE.Color(BG), 9, 26);
@@ -282,10 +298,10 @@ export default function PeptideChainCanvas({
       <ambientLight intensity={0.5} color="#3a8f6d" />
       <pointLight position={[0, 2, 6]} intensity={25} color="#bfffe9" />
       <ChainEnvironment />
-      <GlassChain activeIndex={activeIndex} />
-      <GoldParticles />
+      <GlassChain activeIndex={activeIndex} lite={lite} />
+      <GoldParticles lite={lite} />
       <CameraRig progressRef={progressRef} />
-      <PostFX />
+      <PostFX lite={lite} />
     </Canvas>
   );
 }

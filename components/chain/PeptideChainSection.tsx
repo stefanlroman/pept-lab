@@ -22,13 +22,18 @@ export default function PeptideChainSection() {
   const progressRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [enable3d, setEnable3d] = useState(false);
+  const [lite, setLite] = useState(false);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    const isNarrow = window.innerWidth < 820;
-    setEnable3d(!reduceMotion && !isNarrow);
+    // WebGL runs on phones too — only bail out for reduced-motion. Below
+    // ~768px we still render the scene, just with fewer particles/polys
+    // and lighter post-processing (see PeptideChainCanvas), since a real
+    // phone GPU is a very different budget than a resized desktop window.
+    setEnable3d(!reduceMotion);
+    setLite(window.innerWidth < 768);
   }, []);
 
   useEffect(() => {
@@ -71,8 +76,8 @@ export default function PeptideChainSection() {
             24 Aminosäureketten, eine durchgehende Struktur
           </h2>
           <p className="mt-4 font-sans text-sm text-fg-muted">
-            Auf größeren Bildschirmen begleitet dich hier eine animierte
-            3D-Peptidkette durch alle sieben Kategorien.
+            Deine Systemeinstellungen bevorzugen reduzierte Bewegung — die
+            animierte 3D-Peptidkette bleibt hier deshalb aus.
           </p>
         </div>
       </section>
@@ -83,7 +88,11 @@ export default function PeptideChainSection() {
     <section ref={wrapperRef} className="relative h-[500vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-bg">
         <ChainErrorBoundary>
-          <PeptideChainCanvas progressRef={progressRef} activeIndex={activeIndex} />
+          <PeptideChainCanvas
+            progressRef={progressRef}
+            activeIndex={activeIndex}
+            lite={lite}
+          />
         </ChainErrorBoundary>
 
         {/* vignette so the HTML chrome stays legible over the scene */}
@@ -99,7 +108,7 @@ export default function PeptideChainSection() {
 
         <Link
           href={`/peptide/${active.slug}`}
-          className="group absolute bottom-24 left-6 max-w-xs rounded-2xl border border-line bg-bg/60 p-5 backdrop-blur-md transition-colors hover:border-[var(--accent-live)] sm:bottom-16 sm:left-10 sm:p-6"
+          className="group absolute bottom-24 left-6 max-w-[calc(100vw-3rem)] rounded-2xl border border-line bg-bg/60 p-5 backdrop-blur-md transition-colors hover:border-[var(--accent-live)] sm:bottom-16 sm:left-10 sm:max-w-xs sm:p-6"
           style={{ "--accent-live": accent } as CSSProperties}
         >
           <div ref={panelRef}>
