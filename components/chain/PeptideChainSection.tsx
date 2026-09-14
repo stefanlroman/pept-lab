@@ -20,10 +20,11 @@ export default function PeptideChainSection() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [enable3d, setEnable3d] = useState(false);
   const [lite, setLite] = useState(false);
   const [noWebgl, setNoWebgl] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [forceShow, setForceShow] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(
@@ -46,15 +47,19 @@ export default function PeptideChainSection() {
       hasWebgl = false;
     }
 
-    // WebGL runs on phones too — only bail out for reduced-motion or a
-    // missing/blocked WebGL context. Below ~768px we still render the
-    // scene, just with fewer particles/polys and lighter post-processing
-    // (see PeptideChainCanvas), since a real phone GPU is a very
-    // different budget than a resized desktop window.
-    setEnable3d(!reduceMotion && hasWebgl);
+    setPrefersReducedMotion(reduceMotion);
     setNoWebgl(!hasWebgl);
     setLite(window.innerWidth < 768);
   }, []);
+
+  // WebGL runs on phones too, so a missing/blocked context is a hard
+  // stop — but "reduce motion" is a preference some people flip for
+  // reasons that have nothing to do with motion sickness (battery,
+  // habit), and this scroll-driven scene is exactly the kind of thing
+  // the setting exists to protect against for people who DO need it.
+  // Default to respecting it, but let anyone explicitly ask to see the
+  // animation anyway rather than hard-blocking it outright.
+  const enable3d = !noWebgl && (!prefersReducedMotion || forceShow);
 
   useEffect(() => {
     if (!enable3d || !wrapperRef.current) return;
@@ -98,8 +103,16 @@ export default function PeptideChainSection() {
           <p className="mt-4 font-sans text-sm text-fg-muted">
             {noWebgl
               ? "Die animierte 3D-Ansicht ist in diesem Browser deaktiviert — meist blockiert ein Privatsphäre-/Fingerprinting-Schutz (z. B. Brave Shields) WebGL. Der restliche Katalog funktioniert unabhängig davon ganz normal."
-              : "Deine Systemeinstellungen bevorzugen reduzierte Bewegung — die animierte 3D-Peptidkette bleibt hier deshalb aus."}
+              : "Deine Systemeinstellungen bevorzugen reduzierte Bewegung — die animierte 3D-Peptidkette bleibt hier deshalb standardmäßig aus."}
           </p>
+          {!noWebgl && prefersReducedMotion && (
+            <button
+              onClick={() => setForceShow(true)}
+              className="mt-6 rounded-full border border-line px-6 py-3 font-mono text-xs uppercase tracking-widest transition-colors hover:border-accent hover:text-accent"
+            >
+              Trotzdem anzeigen →
+            </button>
+          )}
         </div>
       </section>
     );
