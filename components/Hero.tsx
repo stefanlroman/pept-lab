@@ -2,7 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { basePath } from "@/lib/basePath";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const words = ["REGENERATION", "STOFFWECHSEL", "LANGLEBIGKEIT", "KOGNITION"];
 
@@ -40,6 +45,7 @@ function DnaSeparator() {
 
 export default function Hero() {
   const root = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -61,17 +67,53 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
+  // Scrub the background video's playback position with scroll instead of
+  // looping it on its own — the video only ever seeks (never calls
+  // .play()), so there's no autoplay-with-sound policy to fight and no
+  // motion the reduced-motion crowd didn't ask for by scrolling.
+  useEffect(() => {
+    const video = videoRef.current;
+    const section = root.current;
+    if (!video || !section) return;
+
+    const scrub = (self: ScrollTrigger) => {
+      if (!video.duration) return;
+      video.currentTime = self.progress * video.duration;
+    };
+
+    let trigger: ScrollTrigger | undefined;
+    const setup = () => {
+      trigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom top",
+        scrub: 0.2,
+        onUpdate: scrub,
+      });
+    };
+
+    if (video.readyState >= 1) {
+      setup();
+    } else {
+      video.addEventListener("loadedmetadata", setup, { once: true });
+    }
+
+    return () => {
+      trigger?.kill();
+      video.removeEventListener("loadedmetadata", setup);
+    };
+  }, []);
+
   return (
     <section
       ref={root}
       className="relative flex min-h-svh flex-col justify-center overflow-hidden px-6 pt-28 sm:px-10"
     >
       <video
+        ref={videoRef}
         className="absolute inset-0 h-full w-full object-cover opacity-60"
         src={`${basePath}/videos/hero-assembly.mp4`}
-        autoPlay
         muted
-        loop
         playsInline
         preload="auto"
       />
