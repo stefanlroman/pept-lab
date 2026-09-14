@@ -6,6 +6,38 @@ import { basePath } from "@/lib/basePath";
 
 const words = ["REGENERATION", "STOFFWECHSEL", "LANGLEBIGKEIT", "KOGNITION"];
 
+// A tiny inline double-helix, used as the marquee separator instead of a
+// plain bullet — one full twist plus three rungs, sized to sit on the
+// text baseline.
+function DnaSeparator() {
+  return (
+    <svg
+      viewBox="0 0 20 14"
+      className="h-3.5 w-5 shrink-0 text-accent"
+      aria-hidden="true"
+    >
+      <path
+        d="M1.5 1.5C1.5 7 18.5 7 18.5 12.5"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M1.5 12.5C1.5 7 18.5 7 18.5 1.5"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        fill="none"
+        strokeLinecap="round"
+        opacity="0.45"
+      />
+      <line x1="4.6" y1="3.6" x2="4.6" y2="5.1" stroke="currentColor" strokeWidth="1" />
+      <line x1="10" y1="6.3" x2="10" y2="7.7" stroke="currentColor" strokeWidth="1" />
+      <line x1="15.4" y1="8.9" x2="15.4" y2="10.4" stroke="currentColor" strokeWidth="1" />
+    </svg>
+  );
+}
+
 export default function Hero() {
   const root = useRef<HTMLDivElement>(null);
 
@@ -77,7 +109,7 @@ export default function Hero() {
         <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-mono text-xs uppercase tracking-widest text-fg-muted">
           {[...words, ...words, ...words].map((w, i) => (
             <span key={i} className="flex items-center gap-10">
-              {w} <span className="text-accent">◆</span>
+              {w} <DnaSeparator />
             </span>
           ))}
         </div>
