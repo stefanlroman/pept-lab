@@ -23,16 +23,36 @@ export default function PeptideChainSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [enable3d, setEnable3d] = useState(false);
   const [lite, setLite] = useState(false);
+  const [noWebgl, setNoWebgl] = useState(false);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    // WebGL runs on phones too — only bail out for reduced-motion. Below
-    // ~768px we still render the scene, just with fewer particles/polys
-    // and lighter post-processing (see PeptideChainCanvas), since a real
-    // phone GPU is a very different budget than a resized desktop window.
-    setEnable3d(!reduceMotion);
+
+    // Some privacy-hardened browsers (Brave's "aggressive" fingerprinting
+    // protection is the common one) make WebGL context creation fail on
+    // purpose, since a GPU's exact capabilities are a fingerprinting
+    // vector. Feature-detect for real rather than assuming a phone-class
+    // device can always render this — a silent blank section is worse
+    // than telling the visitor why it's off.
+    let hasWebgl = false;
+    try {
+      const probe = document.createElement("canvas");
+      hasWebgl = !!(
+        probe.getContext("webgl2") || probe.getContext("webgl")
+      );
+    } catch {
+      hasWebgl = false;
+    }
+
+    // WebGL runs on phones too — only bail out for reduced-motion or a
+    // missing/blocked WebGL context. Below ~768px we still render the
+    // scene, just with fewer particles/polys and lighter post-processing
+    // (see PeptideChainCanvas), since a real phone GPU is a very
+    // different budget than a resized desktop window.
+    setEnable3d(!reduceMotion && hasWebgl);
+    setNoWebgl(!hasWebgl);
     setLite(window.innerWidth < 768);
   }, []);
 
@@ -76,8 +96,9 @@ export default function PeptideChainSection() {
             24 Aminosäureketten, eine durchgehende Struktur
           </h2>
           <p className="mt-4 font-sans text-sm text-fg-muted">
-            Deine Systemeinstellungen bevorzugen reduzierte Bewegung — die
-            animierte 3D-Peptidkette bleibt hier deshalb aus.
+            {noWebgl
+              ? "Die animierte 3D-Ansicht ist in diesem Browser deaktiviert — meist blockiert ein Privatsphäre-/Fingerprinting-Schutz (z. B. Brave Shields) WebGL. Der restliche Katalog funktioniert unabhängig davon ganz normal."
+              : "Deine Systemeinstellungen bevorzugen reduzierte Bewegung — die animierte 3D-Peptidkette bleibt hier deshalb aus."}
           </p>
         </div>
       </section>
