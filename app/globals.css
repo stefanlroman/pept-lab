@@ -60,6 +60,14 @@ body {
   background: var(--accent-dim);
 }
 
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .font-display {
   font-family: var(--font-display);
 }

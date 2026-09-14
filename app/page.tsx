@@ -1,6 +1,6 @@
 import Hero from "@/components/Hero";
 import AminoAcidExplainer from "@/components/AminoAcidExplainer";
-import PeptideGrid from "@/components/PeptideGrid";
+import PeptideCarousels from "@/components/PeptideCarousels";
 import PeptideChainSection from "@/components/chain/PeptideChainSection";
 import Link from "next/link";
 
@@ -10,7 +10,7 @@ export default function Home() {
       <Hero />
       <AminoAcidExplainer />
       <PeptideChainSection />
-      <PeptideGrid />
+      <PeptideCarousels />
 
       <section className="relative border-t border-line px-6 py-24 sm:px-10">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 rounded-2xl border border-line bg-bg-elevated/40 p-8 sm:flex-row sm:items-center sm:p-12">
