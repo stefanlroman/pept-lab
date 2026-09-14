@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import AminoAcidExplainer from "@/components/AminoAcidExplainer";
 import PeptideGrid from "@/components/PeptideGrid";
 import PeptideChainSection from "@/components/chain/PeptideChainSection";
 import Link from "next/link";
@@ -7,6 +8,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <AminoAcidExplainer />
       <PeptideChainSection />
       <PeptideGrid />
 
