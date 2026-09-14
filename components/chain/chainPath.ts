@@ -41,3 +41,39 @@ export function frameAt(curve: THREE.CatmullRomCurve3, t: number) {
 
   return { point, tangent, normal, binormal };
 }
+
+// How many full turns the double helix makes over the whole backbone, and
+// how far each strand sits from the centerline. Two strands 180° apart
+// (phase 0 and Math.PI) trace the same twist, so the ladder rungs (one per
+// peptide) always land directly opposite each other.
+export const HELIX_TURNS = 6;
+export const HELIX_RADIUS = 0.55;
+
+export function helixPointAt(
+  curve: THREE.CatmullRomCurve3,
+  t: number,
+  phase: number,
+  target = new THREE.Vector3()
+) {
+  const { point, normal, binormal } = frameAt(curve, t);
+  const angle = t * HELIX_TURNS * Math.PI * 2 + phase;
+  return target
+    .copy(point)
+    .addScaledVector(normal, Math.cos(angle) * HELIX_RADIUS)
+    .addScaledVector(binormal, Math.sin(angle) * HELIX_RADIUS);
+}
+
+// A THREE.Curve wrapper around helixPointAt so it can feed TubeGeometry
+// directly — TubeGeometry just needs any Curve subclass with getPoint(t).
+export class HelixStrandCurve extends THREE.Curve<THREE.Vector3> {
+  constructor(
+    private base: THREE.CatmullRomCurve3,
+    private phase: number
+  ) {
+    super();
+  }
+
+  getPoint(t: number, target = new THREE.Vector3()) {
+    return helixPointAt(this.base, t, this.phase, target);
+  }
+}

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, type CSSProperties } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment, Lightformer, Html } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import {
   EffectComposer,
   Bloom,
@@ -13,10 +13,17 @@ import {
 } from "@react-three/postprocessing";
 import Link from "next/link";
 import { peptides, categoryColors } from "@/lib/peptides";
-import { buildChainCurve, frameAt, CHAIN_LENGTH } from "./chainPath";
+import {
+  buildChainCurve,
+  frameAt,
+  helixPointAt,
+  HelixStrandCurve,
+  CHAIN_LENGTH,
+} from "./chainPath";
 
 const BG = "#06070a";
-const GLASS_COLOR = "#3fd9c7";
+const STRAND_A_COLOR = "#79ffc7";
+const STRAND_B_COLOR = "#6fb8ff";
 const PARTICLE_COLOR = "#e8b45a";
 
 // Reproducible per-index "randomness" so sizes/particle placement stay
@@ -26,146 +33,169 @@ function hashRand(seed: number) {
   return x - Math.floor(x);
 }
 
-// Procedural reflection probe (no HDRI download) — glass needs *something*
-// in the environment to reflect, or transmission just looks flat/grey.
-function ChainEnvironment() {
+// The two intertwined backbone strands of the double helix, rendered as
+// glowing tubes wound around the shared centerline curve. Pure emissive
+// (untone-mapped) material so bloom does the "neon" work — no physically
+// based transmission, which is what made the old ball-and-stick chain so
+// expensive to render.
+function DnaStrands({ lite }: { lite: boolean }) {
+  const curve = useMemo(() => buildChainCurve(), []);
+  const segments = lite ? 160 : 320;
+  const radialSegments = lite ? 5 : 8;
+
+  const geomA = useMemo(
+    () =>
+      new THREE.TubeGeometry(
+        new HelixStrandCurve(curve, 0),
+        segments,
+        0.045,
+        radialSegments,
+        false
+      ),
+    [curve, segments, radialSegments]
+  );
+  const geomB = useMemo(
+    () =>
+      new THREE.TubeGeometry(
+        new HelixStrandCurve(curve, Math.PI),
+        segments,
+        0.045,
+        radialSegments,
+        false
+      ),
+    [curve, segments, radialSegments]
+  );
+
   return (
-    <Environment resolution={64} frames={1}>
-      <Lightformer
-        form="rect"
-        intensity={4}
-        color="#bfffe9"
-        position={[0, 3, 4]}
-        scale={[8, 8, 1]}
-      />
-      <Lightformer
-        form="rect"
-        intensity={2}
-        color={PARTICLE_COLOR}
-        position={[-6, -2, -3]}
-        scale={[5, 5, 1]}
-      />
-      <Lightformer
-        form="ring"
-        intensity={3}
-        color="#ffffff"
-        position={[0, 0, 8]}
-        scale={[5, 5, 1]}
-      />
-    </Environment>
+    <>
+      <mesh geometry={geomA}>
+        <meshBasicMaterial color={STRAND_A_COLOR} toneMapped={false} />
+      </mesh>
+      <mesh geometry={geomB}>
+        <meshBasicMaterial color={STRAND_B_COLOR} toneMapped={false} />
+      </mesh>
+    </>
   );
 }
 
-// The chain "backbone" itself: a glass sphere at every peptide's position
-// on the curve, connected to its neighbour by a glass rod — a ball-and-
-// stick molecular model, matching the generated product artwork.
-function GlassChain({
-  activeIndex,
-  lite,
-}: {
-  activeIndex: number;
-  lite: boolean;
-}) {
+// One rung per peptide, bridging the two strands — the "base pair" bars of
+// the ladder, tinted per research category so browsing the catalog and
+// scanning the strand read as the same taxonomy.
+function DnaRungs() {
   const curve = useMemo(() => buildChainCurve(), []);
+  const rodGeometry = useMemo(
+    () => new THREE.CylinderGeometry(1, 1, 1, 6, 1, true).rotateX(Math.PI / 2),
+    []
+  );
+  const meshRef = useRef<THREE.InstancedMesh>(null);
 
-  const points = useMemo(
+  const rungs = useMemo(
     () =>
-      Array.from({ length: CHAIN_LENGTH }, (_, i) =>
-        curve.getPointAt(i / (CHAIN_LENGTH - 1))
-      ),
+      Array.from({ length: CHAIN_LENGTH }, (_, i) => {
+        const t = i / (CHAIN_LENGTH - 1);
+        const a = helixPointAt(curve, t, 0);
+        const b = helixPointAt(curve, t, Math.PI);
+        return { a, b, mid: a.clone().lerp(b, 0.5) };
+      }),
     [curve]
   );
 
-  const rodGeometry = useMemo(
-    () =>
-      new THREE.CylinderGeometry(1, 1, 1, lite ? 6 : 10, 1, true).rotateX(
-        Math.PI / 2
-      ),
-    [lite]
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+    const dummy = new THREE.Object3D();
+    const color = new THREE.Color();
+    rungs.forEach((n, i) => {
+      dummy.position.copy(n.mid);
+      dummy.lookAt(n.b);
+      dummy.scale.set(0.045, 0.045, n.a.distanceTo(n.b));
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+      color.set(categoryColors[peptides[i].category]);
+      mesh.setColorAt(i, color);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  }, [rungs]);
+
+  return (
+    <instancedMesh ref={meshRef} args={[rodGeometry, undefined, rungs.length]}>
+      <meshBasicMaterial vertexColors toneMapped={false} />
+    </instancedMesh>
   );
-  const sphereSegments = lite ? 12 : 24;
-  const rodRef = useRef<THREE.InstancedMesh>(null);
+}
+
+// A softly pulsing node marker at each rung's midpoint, plus the clickable
+// product label once the scroll position brings it into range.
+function DnaNodes({ activeIndex }: { activeIndex: number }) {
+  const curve = useMemo(() => buildChainCurve(), []);
+  const points = useMemo(
+    () =>
+      Array.from({ length: CHAIN_LENGTH }, (_, i) => {
+        const t = i / (CHAIN_LENGTH - 1);
+        const a = helixPointAt(curve, t, 0);
+        const b = helixPointAt(curve, t, Math.PI);
+        return a.lerp(b, 0.5);
+      }),
+    [curve]
+  );
+
+  const meshRef = useRef<THREE.InstancedMesh>(null);
 
   useEffect(() => {
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < points.length - 1; i++) {
-      const a = points[i];
-      const b = points[i + 1];
-      const mid = a.clone().lerp(b, 0.5);
-      dummy.position.copy(mid);
-      dummy.lookAt(b);
-      dummy.scale.set(0.075, 0.075, a.distanceTo(b));
-      dummy.updateMatrix();
-      rodRef.current?.setMatrixAt(i, dummy.matrix);
-    }
-    if (rodRef.current) rodRef.current.instanceMatrix.needsUpdate = true;
+    const mesh = meshRef.current;
+    if (!mesh) return;
+    const color = new THREE.Color();
+    points.forEach((_, i) => {
+      color.set(categoryColors[peptides[i].category]);
+      mesh.setColorAt(i, color);
+    });
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
   }, [points]);
 
-  const groupRef = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
     const t = clock.getElapsedTime();
-    groupRef.current?.children.forEach((child, i) => {
-      child.scale.setScalar(1 + Math.sin(t * 1.4 + i * 1.3) * 0.04);
+    const dummy = new THREE.Object3D();
+    points.forEach((p, i) => {
+      dummy.position.copy(p);
+      dummy.scale.setScalar(0.12 * (1 + Math.sin(t * 1.4 + i * 1.3) * 0.18));
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
     });
+    mesh.instanceMatrix.needsUpdate = true;
   });
 
   return (
-    <group>
-      <instancedMesh ref={rodRef} args={[rodGeometry, undefined, points.length - 1]}>
-        <meshPhysicalMaterial
-          color={GLASS_COLOR}
-          transmission={0.9}
-          thickness={0.6}
-          roughness={0.15}
-          ior={1.35}
-          clearcoat={1}
-        />
+    <>
+      <instancedMesh ref={meshRef} args={[undefined, undefined, points.length]}>
+        <sphereGeometry args={[1, 12, 12]} />
+        <meshBasicMaterial vertexColors toneMapped={false} />
       </instancedMesh>
 
-      <group ref={groupRef}>
-        {points.map((p, i) => {
-          const radius = 0.32 + hashRand(i) * 0.22;
-          const peptide = peptides[i];
-          const accent = categoryColors[peptide.category];
-          const showLabel = i >= activeIndex - 2 && i <= activeIndex + 5;
+      {points.map((p, i) => {
+        const peptide = peptides[i];
+        const accent = categoryColors[peptide.category];
+        const showLabel = i >= activeIndex - 2 && i <= activeIndex + 5;
+        if (!showLabel) return null;
 
-          return (
-            <group key={i} position={p}>
-              <mesh>
-                <sphereGeometry args={[radius, sphereSegments, sphereSegments]} />
-                <meshPhysicalMaterial
-                  color={GLASS_COLOR}
-                  emissive={accent}
-                  emissiveIntensity={0.35}
-                  transmission={0.92}
-                  thickness={1.1}
-                  roughness={0.08}
-                  ior={1.4}
-                  clearcoat={1}
-                  iridescence={0.35}
-                  iridescenceIOR={1.3}
-                />
-              </mesh>
-
-              {showLabel && (
-                <Html center zIndexRange={[10, 0]} occlude={false}>
-                  <Link
-                    href={`/peptide/${peptide.slug}`}
-                    className="chain-node-box"
-                    style={{ "--node-color": accent } as CSSProperties}
-                  >
-                    <span className="chain-node-box-index">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="chain-node-box-name">{peptide.name}</span>
-                  </Link>
-                </Html>
-              )}
-            </group>
-          );
-        })}
-      </group>
-    </group>
+        return (
+          <Html key={i} position={p} center zIndexRange={[10, 0]} occlude={false}>
+            <Link
+              href={`/peptide/${peptide.slug}`}
+              className="chain-node-box"
+              style={{ "--node-color": accent } as CSSProperties}
+            >
+              <span className="chain-node-box-index">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="chain-node-box-name">{peptide.name}</span>
+            </Link>
+          </Html>
+        );
+      })}
+    </>
   );
 }
 
@@ -239,8 +269,8 @@ function CameraRig({ progressRef }: { progressRef: { current: number } }) {
 
     camera.position
       .copy(point)
-      .addScaledVector(normal, 1.8)
-      .addScaledVector(binormal, 1.0);
+      .addScaledVector(normal, 1.1)
+      .addScaledVector(binormal, 0.5);
     camera.up.set(0, 1, 0);
     camera.lookAt(aheadPoint);
   });
@@ -260,7 +290,7 @@ function CameraRig({ progressRef }: { progressRef: { current: number } }) {
 // vignette, and drops the chromatic aberration / grain passes entirely.
 function PostFX({ lite }: { lite: boolean }) {
   return (
-    <EffectComposer multisampling={0}>
+    <EffectComposer multisampling={lite ? 0 : 4}>
       <Bloom
         intensity={0.7}
         luminanceThreshold={0.22}
@@ -295,10 +325,9 @@ export default function PeptideChainCanvas({
         scene.background = new THREE.Color(BG);
       }}
     >
-      <ambientLight intensity={0.5} color="#3a8f6d" />
-      <pointLight position={[0, 2, 6]} intensity={25} color="#bfffe9" />
-      <ChainEnvironment />
-      <GlassChain activeIndex={activeIndex} lite={lite} />
+      <DnaStrands lite={lite} />
+      <DnaRungs />
+      <DnaNodes activeIndex={activeIndex} />
       <GoldParticles lite={lite} />
       <CameraRig progressRef={progressRef} />
       <PostFX lite={lite} />
