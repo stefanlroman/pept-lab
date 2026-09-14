@@ -112,6 +112,9 @@ export default async function PeptidePage({
             <p className="mt-2 font-mono text-[11px] text-fg-muted">
               Reinheit ≥ 98 % · HPLC-verifiziert
             </p>
+            <p className="mt-1 font-mono text-[11px] text-fg-muted">
+              Darreichungsform: {peptide.form}
+            </p>
 
             <div className="mt-6">
               <AddToCartButton peptide={peptide} />

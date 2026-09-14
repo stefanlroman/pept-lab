@@ -31,6 +31,18 @@ export default function DisclaimerPage() {
             einsetzen.
           </p>
           <p>
+            Bewusst finden sich auf dieser Website{" "}
+            <strong className="text-fg">
+              keine Angaben zu Applikationsart, Dosierung oder
+              Anwendungshäufigkeit
+            </strong>
+            . Solche Angaben wären eine Gebrauchsanweisung für die Anwendung
+            am Menschen und stünden im Widerspruch zur ausschließlichen
+            Zweckbestimmung als Forschungsreagenz. Fragen zu Applikation oder
+            Dosierung gehören ausschließlich in die Hände von entsprechend
+            qualifiziertem, wissenschaftlichem oder medizinischem Fachpersonal.
+          </p>
+          <p>
             Die auf den Produktseiten dargestellten Informationen fassen
             veröffentlichte Forschungsergebnisse zusammen und stellen keine
             Wirkversprechen, keine Heilaussagen und keine medizinische

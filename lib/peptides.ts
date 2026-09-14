@@ -37,6 +37,8 @@ export interface Peptide {
   effects: string[];
   description: string;
   vial: string;
+  /** Physical shipped form — a packaging fact, not usage guidance. */
+  form: string;
   price: number;
   badge?: "Bestseller" | "Neu" | "Limitiert";
 }
@@ -57,6 +59,7 @@ export const peptides: Peptide[] = [
     description:
       "BPC-157 ist ein synthetisches Peptidfragment, das von einem im Magensaft vorkommenden Protein abgeleitet ist. In der präklinischen Forschung ist es eines der meistuntersuchten Peptide im Bereich Gewebereparatur.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 39,
     badge: "Bestseller",
   },
@@ -75,6 +78,7 @@ export const peptides: Peptide[] = [
     description:
       "TB-500 ist ein synthetisches Fragment des natürlich vorkommenden Proteins Thymosin Beta-4 und wird in der Grundlagenforschung zu Aktin-Regulierung und Zellbeweglichkeit eingesetzt.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 42,
     badge: "Bestseller",
   },
@@ -93,6 +97,7 @@ export const peptides: Peptide[] = [
     description:
       "GHK-Cu ist ein natürlich im menschlichen Plasma vorkommender Kupferkomplex, dessen Konzentration mit dem Alter abnimmt. Es zählt zu den am längsten erforschten Peptiden der Hautforschung.",
     vial: "50 mg",
+    form: "Lyophilisiertes Pulver",
     price: 35,
   },
   {
@@ -110,6 +115,7 @@ export const peptides: Peptide[] = [
     description:
       "Semaglutid ist ein langwirksamer GLP-1-Rezeptoragonist und eines der am intensivsten klinisch untersuchten Moleküle im Bereich Stoffwechselforschung.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 89,
     badge: "Bestseller",
   },
@@ -128,6 +134,7 @@ export const peptides: Peptide[] = [
     description:
       "Tirzepatid kombiniert eine GIP- und GLP-1-Rezeptoraktivierung in einem Molekül und gilt als eines der derzeit meistdiskutierten Forschungspeptide im Stoffwechselbereich.",
     vial: "10 mg",
+    form: "Lyophilisiertes Pulver",
     price: 109,
     badge: "Neu",
   },
@@ -146,6 +153,7 @@ export const peptides: Peptide[] = [
     description:
       "AOD-9604 ist ein modifiziertes Fragment des humanen Wachstumshormons, das gezielt den fettstoffwechselrelevanten Bereich des Moleküls isoliert.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 45,
   },
   {
@@ -162,6 +170,7 @@ export const peptides: Peptide[] = [
     description:
       "Ipamorelin gehört zur Klasse der Growth-Hormone-Releasing-Peptide (GHRP) und wird für seine im Vergleich zu älteren Sekretagoga hohe Rezeptorselektivität in der Forschung geschätzt.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 32,
     badge: "Bestseller",
   },
@@ -180,6 +189,7 @@ export const peptides: Peptide[] = [
     description:
       "CJC-1295 ohne DAC ist ein Analogon des growth-hormone-releasing hormone (GHRH) mit kurzer Wirkdauer, das die körpereigene, pulsatile Ausschüttungsdynamik nachbilden soll.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 34,
   },
   {
@@ -197,6 +207,7 @@ export const peptides: Peptide[] = [
     description:
       "Durch die Anbindung eines Drug Affinity Complex (DAC) erreicht diese Variante von CJC-1295 eine deutlich verlängerte Halbwertszeit gegenüber der unmodifizierten Form.",
     vial: "2 mg",
+    form: "Lyophilisiertes Pulver",
     price: 48,
   },
   {
@@ -213,6 +224,7 @@ export const peptides: Peptide[] = [
     description:
       "Sermorelin bildet die ersten 29 Aminosäuren des natürlichen GHRH ab und zählt zu den am gründlichsten dokumentierten Molekülen dieser Peptidklasse.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 30,
   },
   {
@@ -229,6 +241,7 @@ export const peptides: Peptide[] = [
     description:
       "Tesamorelin ist ein stabilisiertes GHRH-Analogon, das durch eine trans-3-Hexensäure-Modifikation eine höhere Resistenz gegenüber enzymatischem Abbau aufweist.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 52,
   },
   {
@@ -245,6 +258,7 @@ export const peptides: Peptide[] = [
     description:
       "Hexarelin zählt zu den wirkstärksten GHRP-Verbindungen und wird in der Forschung unter anderem als Vergleichssubstanz zu selektiveren Sekretagoga wie Ipamorelin herangezogen.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 33,
   },
   {
@@ -261,6 +275,7 @@ export const peptides: Peptide[] = [
     description:
       "GHRP-2 ist ein synthetisches Hexapeptid aus der Growth-Hormone-Releasing-Peptide-Familie und wird häufig im Forschungsvergleich zu GHRP-6 herangezogen.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 29,
   },
   {
@@ -277,6 +292,7 @@ export const peptides: Peptide[] = [
     description:
       "GHRP-6 war eines der ersten entwickelten Peptide seiner Klasse und bildete die Grundlage für zahlreiche nachfolgende Sekretagoga-Studien.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 28,
   },
   {
@@ -294,6 +310,7 @@ export const peptides: Peptide[] = [
     description:
       "IGF-1 LR3 ist eine verlängerte Variante des Insulin-like Growth Factor 1 mit einer Aminosäuresubstitution, die die Bindung an IGF-Bindungsproteine reduziert.",
     vial: "1 mg",
+    form: "Lyophilisiertes Pulver",
     price: 55,
   },
   {
@@ -310,6 +327,7 @@ export const peptides: Peptide[] = [
     description:
       "Follistatin 344 ist ein Glykoprotein, das in präklinischen Modellen als Bindungsprotein für Myostatin und verwandte Faktoren der TGF-beta-Familie untersucht wird.",
     vial: "1 mg",
+    form: "Lyophilisiertes Pulver",
     price: 78,
     badge: "Limitiert",
   },
@@ -327,6 +345,7 @@ export const peptides: Peptide[] = [
     description:
       "MOTS-c ist eines von mehreren mitochondrial kodierten Peptiden (Mitochondrial-Derived Peptides), die in den letzten Jahren verstärkt in der Alters- und Stoffwechselforschung untersucht werden.",
     vial: "10 mg",
+    form: "Lyophilisiertes Pulver",
     price: 62,
     badge: "Neu",
   },
@@ -345,6 +364,7 @@ export const peptides: Peptide[] = [
     description:
       "Epithalon ist ein synthetisches Analogon des natürlichen Peptids Epithalamin und zählt zu den am längsten untersuchten Molekülen der Langlebigkeitsforschung.",
     vial: "10 mg",
+    form: "Lyophilisiertes Pulver",
     price: 58,
   },
   {
@@ -361,6 +381,7 @@ export const peptides: Peptide[] = [
     description:
       "Thymosin Alpha-1 ist ein natürlich im Thymus produziertes Peptid, das seit Jahrzehnten in der immunologischen Grundlagen- und klinischen Forschung untersucht wird.",
     vial: "10 mg",
+    form: "Lyophilisiertes Pulver",
     price: 65,
   },
   {
@@ -378,6 +399,7 @@ export const peptides: Peptide[] = [
     description:
       "PT-141 ist ein Metabolit von Melanotan II, der gezielt Melanocortin-Rezeptoren im zentralen Nervensystem anspricht und dessen Wirkmechanismus in klinischen Studien untersucht wurde.",
     vial: "10 mg",
+    form: "Lyophilisiertes Pulver",
     price: 49,
   },
   {
@@ -394,6 +416,7 @@ export const peptides: Peptide[] = [
     description:
       "Melanotan II wurde ursprünglich an der University of Arizona zur Erforschung von Pigmentierungsprozessen entwickelt und diente später als Ausgangspunkt für PT-141.",
     vial: "10 mg",
+    form: "Lyophilisiertes Pulver",
     price: 40,
   },
   {
@@ -410,6 +433,7 @@ export const peptides: Peptide[] = [
     description:
       "Kisspeptin-10 ist das aktive Fragment des Kisspeptin-Proteins und gilt in der Endokrinologie als zentraler Regulator der hormonellen Fortpflanzungsachse.",
     vial: "5 mg",
+    form: "Lyophilisiertes Pulver",
     price: 44,
   },
   {
@@ -426,6 +450,7 @@ export const peptides: Peptide[] = [
     description:
       "Selank ist ein synthetisches Peptid, das an das körpereigene Tuftsin angelehnt ist und in der neuropharmakologischen Forschung auf anxiolytische Eigenschaften untersucht wird.",
     vial: "10 mg",
+    form: "Lyophilisiertes Pulver",
     price: 46,
   },
   {
@@ -442,6 +467,7 @@ export const peptides: Peptide[] = [
     description:
       "Semax ist ein synthetisches Fragment des adrenocorticotropen Hormons (ACTH) und zählt zu den am längsten dokumentierten nootropen Peptiden der neuropharmakologischen Forschung.",
     vial: "10 mg",
+    form: "Lyophilisiertes Pulver",
     price: 46,
     badge: "Neu",
   },
