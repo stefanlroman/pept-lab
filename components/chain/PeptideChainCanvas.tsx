@@ -112,14 +112,25 @@ function GlassChain({
   return (
     <group>
       <instancedMesh ref={rodRef} args={[rodGeometry, undefined, points.length - 1]}>
-        <meshPhysicalMaterial
-          color={GLASS_COLOR}
-          transmission={0.9}
-          thickness={0.6}
-          roughness={0.15}
-          ior={1.35}
-          clearcoat={1}
-        />
+        {lite ? (
+          <meshStandardMaterial
+            color={GLASS_COLOR}
+            emissive={GLASS_COLOR}
+            emissiveIntensity={0.5}
+            roughness={0.4}
+            transparent
+            opacity={0.85}
+          />
+        ) : (
+          <meshPhysicalMaterial
+            color={GLASS_COLOR}
+            transmission={0.9}
+            thickness={0.6}
+            roughness={0.15}
+            ior={1.35}
+            clearcoat={1}
+          />
+        )}
       </instancedMesh>
 
       <group ref={groupRef}>
@@ -133,18 +144,29 @@ function GlassChain({
             <group key={i} position={p}>
               <mesh>
                 <sphereGeometry args={[radius, sphereSegments, sphereSegments]} />
-                <meshPhysicalMaterial
-                  color={GLASS_COLOR}
-                  emissive={accent}
-                  emissiveIntensity={0.35}
-                  transmission={0.92}
-                  thickness={1.1}
-                  roughness={0.08}
-                  ior={1.4}
-                  clearcoat={1}
-                  iridescence={0.35}
-                  iridescenceIOR={1.3}
-                />
+                {lite ? (
+                  <meshStandardMaterial
+                    color={GLASS_COLOR}
+                    emissive={accent}
+                    emissiveIntensity={0.6}
+                    roughness={0.35}
+                    transparent
+                    opacity={0.9}
+                  />
+                ) : (
+                  <meshPhysicalMaterial
+                    color={GLASS_COLOR}
+                    emissive={accent}
+                    emissiveIntensity={0.35}
+                    transmission={0.92}
+                    thickness={1.1}
+                    roughness={0.08}
+                    ior={1.4}
+                    clearcoat={1}
+                    iridescence={0.35}
+                    iridescenceIOR={1.3}
+                  />
+                )}
               </mesh>
 
               {showLabel && (
@@ -295,9 +317,13 @@ export default function PeptideChainCanvas({
         scene.background = new THREE.Color(BG);
       }}
     >
-      <ambientLight intensity={0.5} color="#3a8f6d" />
+      <ambientLight intensity={lite ? 0.7 : 0.5} color="#3a8f6d" />
       <pointLight position={[0, 2, 6]} intensity={25} color="#bfffe9" />
-      <ChainEnvironment />
+      {/* The PMREM-baked environment only exists to give the transmissive
+          glass something to reflect — lite mode drops transmission
+          entirely (the least WebKit/mobile-GPU-reliable feature here),
+          so skip the extra render cost of baking it too. */}
+      {!lite && <ChainEnvironment />}
       <GlassChain activeIndex={activeIndex} lite={lite} />
       <GoldParticles lite={lite} />
       <CameraRig progressRef={progressRef} />
