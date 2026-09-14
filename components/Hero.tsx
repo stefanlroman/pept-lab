@@ -44,7 +44,8 @@ function DnaSeparator() {
 }
 
 export default function Hero() {
-  const root = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -63,18 +64,21 @@ export default function Hero() {
           { opacity: 0, y: 16, duration: 0.8, stagger: 0.08, ease: "power3.out" },
           "-=0.6"
         );
-    }, root);
+    }, stickyRef);
     return () => ctx.revert();
   }, []);
 
-  // Scrub the background video's playback position with scroll instead of
-  // looping it on its own — the video only ever seeks (never calls
-  // .play()), so there's no autoplay-with-sound policy to fight and no
+  // Pins the hero (via the tall wrapper + sticky inner section below) and
+  // scrubs the background video's playback position across that pinned
+  // scroll range — the page only continues past the hero once the video
+  // has fully played through, instead of it racing by in the first
+  // normal screen of scrolling. The video only ever seeks (never calls
+  // .play()), so there's no autoplay-with-sound policy to fight, and no
   // motion the reduced-motion crowd didn't ask for by scrolling.
   useEffect(() => {
     const video = videoRef.current;
-    const section = root.current;
-    if (!video || !section) return;
+    const wrapper = wrapperRef.current;
+    if (!video || !wrapper) return;
 
     const scrub = (self: ScrollTrigger) => {
       if (!video.duration) return;
@@ -84,9 +88,9 @@ export default function Hero() {
     let trigger: ScrollTrigger | undefined;
     const setup = () => {
       trigger = ScrollTrigger.create({
-        trigger: section,
+        trigger: wrapper,
         start: "top top",
-        end: "bottom top",
+        end: "bottom bottom",
         scrub: 0.2,
         onUpdate: scrub,
       });
@@ -105,58 +109,60 @@ export default function Hero() {
   }, []);
 
   return (
-    <section
-      ref={root}
-      className="relative flex min-h-svh flex-col justify-center overflow-hidden px-6 pt-28 sm:px-10"
-    >
-      <video
-        ref={videoRef}
-        className="absolute inset-0 h-full w-full object-cover opacity-60"
-        src={`${basePath}/videos/hero-assembly.mp4`}
-        muted
-        playsInline
-        preload="auto"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-bg/70 to-bg" />
+    <div ref={wrapperRef} className="relative h-[240vh]">
+      <section
+        ref={stickyRef}
+        className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden px-6 pt-28 sm:px-10"
+      >
+        <video
+          ref={videoRef}
+          className="absolute inset-0 h-full w-full object-cover opacity-60"
+          src={`${basePath}/videos/hero-assembly.mp4`}
+          muted
+          playsInline
+          preload="auto"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-bg/70 to-bg" />
 
-      <div className="hero-meta relative mb-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
-        <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
-        24 Forschungspeptide · Laborqualität ≥ 98 % Reinheit
-      </div>
-
-      <h1 className="font-display relative max-w-4xl text-[13vw] font-medium leading-[0.92] tracking-tight sm:text-[7.5vw]">
-        <span className="hero-line block overflow-hidden">
-          <span className="inline-block">Die</span>
-        </span>
-        <span className="hero-line block overflow-hidden">
-          <span className="inline-block text-accent">Bausteine</span>
-        </span>
-        <span className="hero-line block overflow-hidden">
-          <span className="inline-block">des Lebens.</span>
-        </span>
-      </h1>
-
-      <p className="hero-sub relative mt-8 max-w-md font-sans text-sm leading-relaxed text-fg-muted sm:text-base">
-        Kuratiertes Sortiment synthetischer Peptide für Labore und
-        wissenschaftliche Anwender — von Geweberegeneration bis Kognition.
-        Klicke dich durch den Katalog wie durch ein Archiv.
-      </p>
-
-      <div className="hero-scroll relative mt-16 flex items-center gap-4 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
-        <span>Katalog erkunden</span>
-        <span className="h-px w-10 bg-line" />
-        <span>↓</span>
-      </div>
-
-      <div className="pointer-events-none absolute bottom-0 left-0 w-full overflow-hidden border-t border-line py-3">
-        <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-mono text-xs uppercase tracking-widest text-fg-muted">
-          {[...words, ...words, ...words].map((w, i) => (
-            <span key={i} className="flex items-center gap-10">
-              {w} <DnaSeparator />
-            </span>
-          ))}
+        <div className="hero-meta relative mb-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
+          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
+          24 Forschungspeptide · Laborqualität ≥ 98 % Reinheit
         </div>
-      </div>
-    </section>
+
+        <h1 className="font-display relative max-w-4xl text-[13vw] font-medium leading-[0.92] tracking-tight sm:text-[7.5vw]">
+          <span className="hero-line block overflow-hidden">
+            <span className="inline-block">Die</span>
+          </span>
+          <span className="hero-line block overflow-hidden">
+            <span className="inline-block text-accent">Bausteine</span>
+          </span>
+          <span className="hero-line block overflow-hidden">
+            <span className="inline-block">des Lebens.</span>
+          </span>
+        </h1>
+
+        <p className="hero-sub relative mt-8 max-w-md font-sans text-sm leading-relaxed text-fg-muted sm:text-base">
+          Kuratiertes Sortiment synthetischer Peptide für Labore und
+          wissenschaftliche Anwender — von Geweberegeneration bis Kognition.
+          Klicke dich durch den Katalog wie durch ein Archiv.
+        </p>
+
+        <div className="hero-scroll relative mt-16 flex items-center gap-4 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
+          <span>Weiterscrollen</span>
+          <span className="h-px w-10 bg-line" />
+          <span>↓</span>
+        </div>
+
+        <div className="pointer-events-none absolute bottom-0 left-0 w-full overflow-hidden border-t border-line py-3">
+          <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-mono text-xs uppercase tracking-widest text-fg-muted">
+            {[...words, ...words, ...words].map((w, i) => (
+              <span key={i} className="flex items-center gap-10">
+                {w} <DnaSeparator />
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
