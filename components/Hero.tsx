@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { basePath } from "@/lib/basePath";
 
 const words = ["REGENERATION", "STOFFWECHSEL", "LANGLEBIGKEIT", "KOGNITION"];
 
@@ -35,7 +36,7 @@ export default function Hero() {
     >
       <video
         className="absolute inset-0 h-full w-full object-cover opacity-60"
-        src="/videos/hero-assembly.mp4"
+        src={`${basePath}/videos/hero-assembly.mp4`}
         autoPlay
         muted
         loop

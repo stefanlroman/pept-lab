@@ -6,11 +6,18 @@ import type { NextConfig } from "next";
 const isGithubActions = process.env.GITHUB_ACTIONS === "true";
 const repoName = "pept-lab";
 
+const basePath = isGithubActions ? `/${repoName}` : "";
+
 const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
-  basePath: isGithubActions ? `/${repoName}` : "",
+  basePath,
   assetPrefix: isGithubActions ? `/${repoName}/` : "",
+  // next/image (unoptimized) and plain <img>/<video> tags don't get
+  // basePath rewritten into their src automatically — only next/link and
+  // the Next-managed _next/static assets do. Expose it so components can
+  // prefix hardcoded /public paths themselves (see lib/basePath.ts).
+  env: { NEXT_PUBLIC_BASE_PATH: basePath },
 };
 
 export default nextConfig;

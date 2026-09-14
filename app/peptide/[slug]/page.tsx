@@ -10,6 +10,7 @@ import {
 } from "@/lib/peptides";
 import AddToCartButton from "@/components/AddToCartButton";
 import PeptideTile from "@/components/PeptideTile";
+import { basePath } from "@/lib/basePath";
 
 export function generateStaticParams() {
   return peptides.map((p) => ({ slug: p.slug }));
@@ -55,7 +56,7 @@ export default async function PeptidePage({
           <div>
             <div className="relative mb-8 aspect-square w-full overflow-hidden rounded-2xl border border-line sm:aspect-[4/3]">
               <Image
-                src={`/images/peptides/${peptide.slug}.png`}
+                src={`${basePath}/images/peptides/${peptide.slug}.png`}
                 alt={`${peptide.name} — ${peptide.tagline}`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 60vw"

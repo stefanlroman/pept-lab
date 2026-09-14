@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Peptide, formatPrice } from "@/lib/peptides";
+import { basePath } from "@/lib/basePath";
 
 const badgeColor: Record<string, string> = {
   Bestseller: "text-accent border-accent-dim",
@@ -22,7 +23,7 @@ export default function PeptideTile({
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         <Image
-          src={`/images/peptides/${peptide.slug}.png`}
+          src={`${basePath}/images/peptides/${peptide.slug}.png`}
           alt={`${peptide.name} — ${peptide.tagline}`}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

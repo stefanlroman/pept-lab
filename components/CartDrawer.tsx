@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/lib/cart-context";
 import { formatPrice } from "@/lib/peptides";
+import { basePath } from "@/lib/basePath";
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, updateQuantity, removeItem, totalPrice } =
@@ -48,7 +49,7 @@ export default function CartDrawer() {
                     className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-line"
                   >
                     <Image
-                      src={`/images/peptides/${item.slug}.png`}
+                      src={`${basePath}/images/peptides/${item.slug}.png`}
                       alt={item.name}
                       fill
                       sizes="64px"
