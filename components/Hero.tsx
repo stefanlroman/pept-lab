@@ -2,45 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import Link from "next/link";
 import { basePath } from "@/lib/basePath";
-
-const words = ["REGENERATION", "STOFFWECHSEL", "LANGLEBIGKEIT", "KOGNITION"];
-
-// A tiny inline double-helix, used as the marquee separator instead of a
-// plain bullet — one full twist plus three rungs, sized to sit on the
-// text baseline.
-function DnaSeparator() {
-  return (
-    <svg
-      viewBox="0 0 20 14"
-      className="h-3.5 w-5 shrink-0 text-accent"
-      aria-hidden="true"
-    >
-      <path
-        d="M1.5 1.5C1.5 7 18.5 7 18.5 12.5"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        fill="none"
-        strokeLinecap="round"
-      />
-      <path
-        d="M1.5 12.5C1.5 7 18.5 7 18.5 1.5"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        fill="none"
-        strokeLinecap="round"
-        opacity="0.45"
-      />
-      <line x1="4.6" y1="3.6" x2="4.6" y2="5.1" stroke="currentColor" strokeWidth="1" />
-      <line x1="10" y1="6.3" x2="10" y2="7.7" stroke="currentColor" strokeWidth="1" />
-      <line x1="15.4" y1="8.9" x2="15.4" y2="10.4" stroke="currentColor" strokeWidth="1" />
-    </svg>
-  );
-}
+import { categories, categoryColors } from "@/lib/peptides";
+import { Button } from "@/components/ui/button";
+import { InfiniteSlider } from "@/components/ui/infinite-slider";
+import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -54,7 +24,7 @@ export default function Hero() {
           stagger: 0.06,
         })
         .from(
-          ".hero-sub, .hero-meta, .hero-scroll",
+          ".hero-sub, .hero-meta, .hero-cta",
           { opacity: 0, y: 16, duration: 0.8, stagger: 0.08, ease: "power3.out" },
           "-=0.6"
         );
@@ -63,61 +33,103 @@ export default function Hero() {
   }, []);
 
   return (
-    <section
-      ref={heroRef}
-      className="relative flex h-svh flex-col justify-center overflow-hidden px-6 pt-28 sm:px-10"
-    >
-      <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover opacity-60"
-          src={`${basePath}/videos/hero-assembly.mp4`}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-bg/70 to-bg" />
+    <div ref={heroRef} className="overflow-x-hidden">
+      <section className="relative">
+        <div className="px-6 py-24 sm:px-10 md:pb-32 lg:pb-36 lg:pt-40">
+          <div className="relative z-10 mx-auto flex max-w-7xl flex-col">
+            <div className="mx-auto max-w-lg text-center lg:ml-0 lg:max-w-full lg:text-left">
+              <div className="hero-meta relative mb-6 flex items-center justify-center gap-3 font-sans text-sm text-fg-muted lg:justify-start">
+                <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
+                24 Forschungspeptide in Laborqualität, jedes ≥ 98 % Reinheit
+              </div>
 
-        <div className="hero-meta relative mb-6 flex items-center gap-3 font-sans text-sm text-fg-muted">
-          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
-          24 Forschungspeptide in Laborqualität, jedes ≥ 98 % Reinheit
-        </div>
+              <h1 className="font-display relative max-w-3xl text-5xl font-medium leading-[0.95] tracking-tight sm:text-6xl xl:text-7xl">
+                <span className="hero-line block overflow-hidden">
+                  <span className="inline-block">Die Bausteine</span>
+                </span>
+                <span className="hero-line block overflow-hidden">
+                  <span className="inline-block">des Lebens.</span>
+                </span>
+              </h1>
 
-        <h1 className="font-display relative max-w-4xl text-[13vw] font-medium leading-[0.92] tracking-tight sm:text-[7.5vw]">
-          <span className="hero-line block overflow-hidden">
-            <span className="inline-block">Die</span>
-          </span>
-          <span className="hero-line block overflow-hidden">
-            <span className="inline-block">Bausteine</span>
-          </span>
-          <span className="hero-line block overflow-hidden">
-            <span className="inline-block">des Lebens.</span>
-          </span>
-        </h1>
+              <p className="hero-sub relative mx-auto mt-8 max-w-md font-sans text-base leading-relaxed text-fg-muted lg:mx-0">
+                Kuratiertes Sortiment synthetischer Peptide für Labore und
+                wissenschaftliche Anwender — von Geweberegeneration bis
+                Kognition. Klicke dich durch den Katalog wie durch ein
+                Archiv.
+              </p>
 
-        <p className="hero-sub relative mt-8 max-w-md font-sans text-sm leading-relaxed text-fg-muted sm:text-base">
-          Kuratiertes Sortiment synthetischer Peptide für Labore und
-          wissenschaftliche Anwender — von Geweberegeneration bis Kognition.
-          Klicke dich durch den Katalog wie durch ein Archiv.
-        </p>
+              <div className="hero-cta relative mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+                <Button asChild size="lg" className="h-12 rounded-full px-7 text-base">
+                  <Link href="#kette">Start</Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="ghost"
+                  className="h-12 rounded-full px-7 text-base"
+                >
+                  <Link href="#katalog">Katalog ansehen</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
 
-        <a
-          href="#kette"
-          className="hero-scroll relative mt-16 flex w-fit items-center rounded-full bg-accent px-7 py-3 font-sans text-sm font-medium text-bg transition-transform hover:scale-105"
-        >
-          Start
-        </a>
-
-        <div className="pointer-events-none absolute bottom-0 left-0 w-full overflow-hidden border-t border-line py-3">
-          <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-mono text-xs uppercase tracking-widest text-fg-muted">
-            {[...words, ...words, ...words].map((w, i) => (
-              <span key={i} className="flex items-center gap-10">
-                {w} <DnaSeparator />
-              </span>
-            ))}
+          <div className="absolute inset-1 -z-10 overflow-hidden rounded-3xl border border-line">
+            <video
+              className="size-full object-cover opacity-40"
+              src={`${basePath}/videos/hero-assembly.mp4`}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-bg/20" />
           </div>
         </div>
-    </section>
+      </section>
+
+      <section className="bg-bg pb-16">
+        <div className="group relative mx-auto max-w-7xl px-6 sm:px-10">
+          <div className="flex flex-col items-center gap-4 md:flex-row">
+            <div className="shrink-0 md:max-w-52 md:border-r md:border-line md:pr-6">
+              <p className="text-center font-sans text-sm text-fg-muted md:text-right">
+                Sortiert nach Forschungsfeld
+              </p>
+            </div>
+            <div className="relative w-full py-2 md:w-[calc(100%-13rem)]">
+              <InfiniteSlider duration={30} durationOnHover={60} gap={32}>
+                {categories.map((c) => (
+                  <div
+                    key={c.id}
+                    className="flex items-center gap-2 whitespace-nowrap font-sans text-sm text-fg-muted"
+                  >
+                    <span
+                      className="h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: categoryColors[c.id] }}
+                    />
+                    {c.label}
+                  </div>
+                ))}
+              </InfiniteSlider>
+
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-bg to-transparent" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-bg to-transparent" />
+              <ProgressiveBlur
+                className="pointer-events-none absolute left-0 top-0 h-full w-16"
+                direction="left"
+                blurIntensity={1}
+              />
+              <ProgressiveBlur
+                className="pointer-events-none absolute right-0 top-0 h-full w-16"
+                direction="right"
+                blurIntensity={1}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

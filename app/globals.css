@@ -23,6 +23,24 @@
   --font-display: var(--font-bricolage);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains);
+
+  /* shadcn/ui-style aliases, mapped onto the tokens above, so components
+     copied from shadcn-based registries render in the site's own palette
+     instead of their default zinc/black-and-white look. */
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--bg);
+  --color-secondary: var(--bg-elevated);
+  --color-secondary-foreground: var(--fg);
+  --color-muted: var(--bg-elevated);
+  --color-muted-foreground: var(--fg-muted);
+  --color-destructive: var(--accent-warm);
+  --color-destructive-foreground: var(--bg);
+  --color-accent-foreground: var(--bg);
+  --color-border: var(--line);
+  --color-input: var(--line);
+  --color-ring: var(--accent-dim);
 }
 
 * {
