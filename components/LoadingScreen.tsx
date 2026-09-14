@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import Logo from "./Logo";
 
 const MIN_VISIBLE_MS = 900;
 const MAX_WAIT_MS = 8000;
@@ -91,7 +92,7 @@ export default function LoadingScreen() {
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-bg"
     >
       <div className="flex items-center gap-3">
-        <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
+        <Logo className="h-6 w-6 text-accent" />
         <span className="font-display text-lg tracking-tight">
           PEPT<span className="text-accent">.</span>LAB
         </span>

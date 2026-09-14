@@ -1,11 +1,13 @@
 import Link from "next/link";
+import Logo from "./Logo";
 
 export default function Footer() {
   return (
     <footer className="relative z-10 border-t border-line px-6 py-16 sm:px-10">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 md:flex-row md:justify-between">
         <div className="max-w-sm">
-          <p className="font-display text-xl">
+          <p className="flex items-center gap-2 font-display text-xl">
+            <Logo className="h-6 w-6 text-accent" />
             PEPT<span className="text-accent">.</span>LAB
           </p>
           <p className="mt-3 font-mono text-xs leading-relaxed text-fg-muted">

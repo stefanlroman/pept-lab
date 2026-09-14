@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
+import Logo from "./Logo";
 
 export default function Header() {
   const { totalCount, openCart } = useCart();
@@ -13,8 +14,9 @@ export default function Header() {
       <div className="capsule flex w-full max-w-3xl items-center justify-between gap-2 px-3 py-2 sm:px-5">
         <Link
           href="/"
-          className="font-display text-sm font-medium tracking-tight sm:text-base"
+          className="flex items-center gap-2 font-display text-sm font-medium tracking-tight sm:text-base"
         >
+          <Logo className="h-5 w-5 text-accent sm:h-6 sm:w-6" />
           PEPT<span className="text-accent">.</span>LAB
         </Link>
 
