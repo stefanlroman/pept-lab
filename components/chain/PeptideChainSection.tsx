@@ -119,7 +119,7 @@ export default function PeptideChainSection() {
   }
 
   return (
-    <section ref={wrapperRef} className="relative h-[500vh]">
+    <section id="kette" ref={wrapperRef} className="relative h-[500vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-bg">
         <ChainErrorBoundary>
           <PeptideChainCanvas

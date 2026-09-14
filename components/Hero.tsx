@@ -2,12 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { basePath } from "@/lib/basePath";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const words = ["REGENERATION", "STOFFWECHSEL", "LANGLEBIGKEIT", "KOGNITION"];
 
@@ -68,48 +63,8 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
-  // Pins the hero (via the tall wrapper + sticky inner section below) and
-  // scrubs the background video's playback position across that pinned
-  // scroll range — the page only continues past the hero once the video
-  // has fully played through, instead of it racing by in the first
-  // normal screen of scrolling. The video only ever seeks (never calls
-  // .play()), so there's no autoplay-with-sound policy to fight, and no
-  // motion the reduced-motion crowd didn't ask for by scrolling.
-  useEffect(() => {
-    const video = videoRef.current;
-    const wrapper = wrapperRef.current;
-    if (!video || !wrapper) return;
-
-    const scrub = (self: ScrollTrigger) => {
-      if (!video.duration) return;
-      video.currentTime = self.progress * video.duration;
-    };
-
-    let trigger: ScrollTrigger | undefined;
-    const setup = () => {
-      trigger = ScrollTrigger.create({
-        trigger: wrapper,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.2,
-        onUpdate: scrub,
-      });
-    };
-
-    if (video.readyState >= 1) {
-      setup();
-    } else {
-      video.addEventListener("loadedmetadata", setup, { once: true });
-    }
-
-    return () => {
-      trigger?.kill();
-      video.removeEventListener("loadedmetadata", setup);
-    };
-  }, []);
-
   return (
-    <div ref={wrapperRef} className="relative h-[240vh]">
+    <div ref={wrapperRef} className="relative h-[160vh]">
       <section
         ref={stickyRef}
         className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden px-6 pt-28 sm:px-10"
@@ -118,6 +73,8 @@ export default function Hero() {
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover opacity-60"
           src={`${basePath}/videos/hero-assembly.mp4`}
+          autoPlay
+          loop
           muted
           playsInline
           preload="auto"
@@ -147,11 +104,13 @@ export default function Hero() {
           Klicke dich durch den Katalog wie durch ein Archiv.
         </p>
 
-        <div className="hero-scroll relative mt-16 flex items-center gap-4 font-mono text-[11px] uppercase tracking-widest text-fg-muted">
-          <span>Weiterscrollen</span>
-          <span className="h-px w-10 bg-line" />
-          <span>↓</span>
-        </div>
+        <a
+          href="#kette"
+          className="hero-scroll relative mt-16 flex w-fit items-center gap-3 rounded-full bg-accent px-7 py-3 font-mono text-xs uppercase tracking-widest text-bg transition-transform hover:scale-105"
+        >
+          Start
+          <span aria-hidden="true">→</span>
+        </a>
 
         <div className="pointer-events-none absolute bottom-0 left-0 w-full overflow-hidden border-t border-line py-3">
           <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-mono text-xs uppercase tracking-widest text-fg-muted">
