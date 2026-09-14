@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import AminoAcidExplainer from "@/components/AminoAcidExplainer";
+import GoalQuiz from "@/components/GoalQuiz";
 import PeptideCarousels from "@/components/PeptideCarousels";
 import PeptideChainSection from "@/components/chain/PeptideChainSection";
 import Link from "next/link";
@@ -10,6 +11,7 @@ export default function Home() {
       <Hero />
       <AminoAcidExplainer />
       <PeptideChainSection />
+      <GoalQuiz />
       <PeptideCarousels />
 
       <section className="relative border-t border-line px-6 py-24 sm:px-10">

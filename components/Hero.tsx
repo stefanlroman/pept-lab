@@ -39,8 +39,7 @@ function DnaSeparator() {
 }
 
 export default function Hero() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -59,17 +58,16 @@ export default function Hero() {
           { opacity: 0, y: 16, duration: 0.8, stagger: 0.08, ease: "power3.out" },
           "-=0.6"
         );
-    }, stickyRef);
+    }, heroRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <div ref={wrapperRef} className="relative h-[160vh]">
-      <section
-        ref={stickyRef}
-        className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden px-6 pt-28 sm:px-10"
-      >
-        <video
+    <section
+      ref={heroRef}
+      className="relative flex h-svh flex-col justify-center overflow-hidden px-6 pt-28 sm:px-10"
+    >
+      <video
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover opacity-60"
           src={`${basePath}/videos/hero-assembly.mp4`}
@@ -121,7 +119,6 @@ export default function Hero() {
             ))}
           </div>
         </div>
-      </section>
-    </div>
+    </section>
   );
 }
