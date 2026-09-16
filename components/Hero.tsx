@@ -1,59 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { basePath } from "@/lib/basePath";
 import { categories, categoryColors } from "@/lib/peptides";
 import { Button } from "@/components/ui/button";
 import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
-import FigureErrorBoundary from "@/components/hero3d/FigureErrorBoundary";
-
-const HeroFigureCanvas = dynamic(
-  () => import("@/components/hero3d/HeroFigureCanvas"),
-  { ssr: false }
-);
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef(0);
-  const [enable3d, setEnable3d] = useState(false);
-
-  useEffect(() => {
-    let hasWebgl = false;
-    try {
-      const probe = document.createElement("canvas");
-      hasWebgl = !!(probe.getContext("webgl2") || probe.getContext("webgl"));
-    } catch {
-      hasWebgl = false;
-    }
-    setEnable3d(hasWebgl);
-  }, []);
-
-  // The figure turns as the hero scrolls past — progress 0 at the top of
-  // the viewport, 1 once the section has scrolled fully out of view, no
-  // pin involved (the page keeps scrolling normally underneath it).
-  useEffect(() => {
-    if (!enable3d || !visualRef.current) return;
-    const trigger = ScrollTrigger.create({
-      trigger: visualRef.current,
-      start: "top top",
-      end: "bottom top",
-      scrub: true,
-      onUpdate: (self) => {
-        progressRef.current = self.progress;
-      },
-    });
-    return () => trigger.kill();
-  }, [enable3d]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -118,10 +75,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <div
-            ref={visualRef}
-            className="absolute inset-1 -z-10 overflow-hidden rounded-3xl border border-line"
-          >
+          <div className="absolute inset-1 -z-10 overflow-hidden rounded-3xl border border-line">
             <video
               className="size-full object-cover opacity-40"
               src={`${basePath}/videos/hero-assembly.mp4`}
@@ -131,13 +85,6 @@ export default function Hero() {
               playsInline
               preload="auto"
             />
-            {enable3d && (
-              <FigureErrorBoundary>
-                <div className="absolute inset-0">
-                  <HeroFigureCanvas progressRef={progressRef} />
-                </div>
-              </FigureErrorBoundary>
-            )}
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-bg/20" />
           </div>
         </div>
