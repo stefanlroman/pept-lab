@@ -25,6 +25,7 @@ const BG = "#06070a";
 const STRAND_A_COLOR = "#79ffc7";
 const STRAND_B_COLOR = "#6fb8ff";
 const PARTICLE_COLOR = "#e8b45a";
+const RUNG_COLOR = "#ffab5e";
 
 // Reproducible per-index "randomness" so sizes/particle placement stay
 // stable across renders without needing a seeded RNG dependency.
@@ -104,23 +105,19 @@ function DnaRungs() {
     const mesh = meshRef.current;
     if (!mesh) return;
     const dummy = new THREE.Object3D();
-    const color = new THREE.Color();
     rungs.forEach((n, i) => {
       dummy.position.copy(n.mid);
       dummy.lookAt(n.b);
-      dummy.scale.set(0.045, 0.045, n.a.distanceTo(n.b));
+      dummy.scale.set(0.055, 0.055, n.a.distanceTo(n.b));
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
-      color.set(categoryColors[peptides[i].category]);
-      mesh.setColorAt(i, color);
     });
     mesh.instanceMatrix.needsUpdate = true;
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
   }, [rungs]);
 
   return (
     <instancedMesh ref={meshRef} args={[rodGeometry, undefined, rungs.length]}>
-      <meshBasicMaterial vertexColors toneMapped={false} />
+      <meshBasicMaterial color={RUNG_COLOR} toneMapped={false} />
     </instancedMesh>
   );
 }
