@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import Link from "next/link";
 import { basePath } from "@/lib/basePath";
@@ -8,9 +9,106 @@ import { categories, categoryColors } from "@/lib/peptides";
 import { Button } from "@/components/ui/button";
 import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
+import FigureErrorBoundary from "@/components/hero3d/FigureErrorBoundary";
+
+const HeroFigureCanvas = dynamic(
+  () => import("@/components/hero3d/HeroFigureCanvas"),
+  { ssr: false }
+);
+
+// How much accumulated wheel/touch delta (px) it takes to spin the
+// figure through its full turn while the page is locked.
+const ROTATE_DISTANCE = 1600;
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const visualRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef(0);
+  const [enable3d, setEnable3d] = useState(false);
+
+  useEffect(() => {
+    let hasWebgl = false;
+    try {
+      const probe = document.createElement("canvas");
+      hasWebgl = !!(probe.getContext("webgl2") || probe.getContext("webgl"));
+    } catch {
+      hasWebgl = false;
+    }
+    setEnable3d(hasWebgl);
+  }, []);
+
+  // Genuinely hijacks scroll input instead of just pinning the section
+  // visually: whenever the page is at its very top, page scroll is
+  // disabled outright (body overflow: hidden) and wheel/touch/key delta
+  // is read directly to drive the figure's rotation — so a scroll
+  // gesture moves the figure, not the page, no matter how hard or fast
+  // it's flicked. This listener stays attached for the component's
+  // lifetime (not just until the first unlock) so scrolling back up to
+  // the top re-engages the lock and reverses the rotation, matching
+  // scrolling down through it the first time.
+  useEffect(() => {
+    if (!enable3d) return;
+
+    const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+    const setLocked = (locked: boolean) => {
+      document.body.style.overflow = locked ? "hidden" : "";
+    };
+    // Only start locked if we're already at the top (a fresh landing,
+    // not e.g. a back-navigation restoring a scroll position).
+    if (window.scrollY <= 0) setLocked(true);
+
+    const advance = (delta: number) => {
+      const atTop = window.scrollY <= 0;
+      const finished = progressRef.current >= 1;
+      if (!atTop || (finished && delta > 0)) {
+        if (document.body.style.overflow === "hidden") setLocked(false);
+        return false;
+      }
+      setLocked(true);
+      progressRef.current = clamp01(progressRef.current + delta / ROTATE_DISTANCE);
+      return true;
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (advance(e.deltaY)) e.preventDefault();
+    };
+
+    let touchStartY: number | null = null;
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0]?.clientY ?? null;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (touchStartY === null) return;
+      const y = e.touches[0]?.clientY ?? touchStartY;
+      const delta = touchStartY - y;
+      if (advance(delta)) {
+        e.preventDefault();
+        touchStartY = y;
+      } else {
+        touchStartY = y;
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (["ArrowDown", "PageDown", " ", "End"].includes(e.key)) {
+        if (advance(120)) e.preventDefault();
+      } else if (["ArrowUp", "PageUp", "Home"].includes(e.key) && window.scrollY <= 0) {
+        if (advance(-120)) e.preventDefault();
+      }
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      setLocked(false);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [enable3d]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -34,11 +132,10 @@ export default function Hero() {
 
   return (
     <div ref={heroRef} className="overflow-x-hidden">
-      <section className="relative">
-        <div className="px-6 py-24 sm:px-10 md:pb-32 lg:pb-36 lg:pt-40">
-          <div className="relative z-10 mx-auto flex max-w-7xl flex-col">
-            <div className="mx-auto max-w-lg text-center lg:ml-0 lg:max-w-full lg:text-left">
-              <div className="hero-meta relative mb-6 flex items-center justify-center gap-3 font-sans text-sm text-fg-muted lg:justify-start">
+      <section className="relative flex h-svh flex-col justify-center overflow-hidden px-6 sm:px-10">
+        <div className="relative z-10 flex max-w-7xl flex-col">
+            <div className="max-w-full text-left">
+              <div className="hero-meta relative mb-6 flex items-center justify-start gap-3 font-sans text-sm text-fg-muted">
                 <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
                 24 Forschungspeptide in Laborqualität, jedes ≥ 98 % Reinheit
               </div>
@@ -52,14 +149,14 @@ export default function Hero() {
                 </span>
               </h1>
 
-              <p className="hero-sub relative mx-auto mt-8 max-w-md font-sans text-base leading-relaxed text-fg-muted lg:mx-0">
+              <p className="hero-sub relative mt-8 max-w-md font-sans text-base leading-relaxed text-fg-muted">
                 Kuratiertes Sortiment synthetischer Peptide für Labore und
                 wissenschaftliche Anwender — von Geweberegeneration bis
                 Kognition. Klicke dich durch den Katalog wie durch ein
                 Archiv.
               </p>
 
-              <div className="hero-cta relative mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+              <div className="hero-cta relative mt-10 flex flex-col items-start justify-start gap-3 sm:flex-row">
                 <Button asChild size="lg" className="h-12 rounded-full px-7 text-base">
                   <Link href="#kette">Start</Link>
                 </Button>
@@ -75,19 +172,29 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="absolute inset-1 -z-10 overflow-hidden rounded-3xl border border-line">
-            <video
-              className="size-full object-cover opacity-40"
-              src={`${basePath}/videos/hero-assembly.mp4`}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-            />
+          <div
+            ref={visualRef}
+            className="absolute inset-1 -z-10 overflow-hidden rounded-3xl border border-line bg-bg"
+          >
+            {enable3d ? (
+              <FigureErrorBoundary>
+                <div className="absolute inset-0">
+                  <HeroFigureCanvas progressRef={progressRef} />
+                </div>
+              </FigureErrorBoundary>
+            ) : (
+              <video
+                className="size-full object-cover opacity-40"
+                src={`${basePath}/videos/hero-assembly.mp4`}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-bg/20" />
           </div>
-        </div>
       </section>
 
       <section className="bg-bg pb-16">
