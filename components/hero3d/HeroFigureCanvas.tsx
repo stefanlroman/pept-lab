@@ -7,7 +7,7 @@ import { useGLTF } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import { basePath } from "@/lib/basePath";
 
-const MODEL_URL = `${basePath}/models/glass-figure.glb`;
+const MODEL_URL = `${basePath}/models/glass-figure-v2.glb`;
 const GLOW_COLOR = { r: 121, g: 255, b: 199 }; // brand cyan-green
 
 // Reads a texture's decoded image onto a scratch canvas so its pixels
@@ -169,10 +169,10 @@ function AmbientMist({ radius }: { radius: number }) {
   const material = useMemo(
     () =>
       new THREE.PointsMaterial({
-        size: 0.045,
+        size: 0.02,
         vertexColors: true,
         transparent: true,
-        opacity: 0.85,
+        opacity: 0.95,
         sizeAttenuation: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
@@ -217,7 +217,7 @@ export default function HeroFigureCanvas({
     >
       <Figure progressRef={progressRef} />
       <EffectComposer multisampling={0}>
-        <Bloom intensity={0.2} luminanceThreshold={0.45} luminanceSmoothing={0.3} radius={0.35} />
+        <Bloom intensity={0.13} luminanceThreshold={0.5} luminanceSmoothing={0.25} radius={0.25} />
         <Vignette eskil={false} offset={0.2} darkness={0.85} />
       </EffectComposer>
     </Canvas>
