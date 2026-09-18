@@ -79,7 +79,7 @@ function useFigureLines(scene: THREE.Group) {
       const material = new THREE.LineBasicMaterial({
         vertexColors: true,
         transparent: true,
-        opacity: 0.55,
+        opacity: 0.85,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
       });
@@ -192,7 +192,7 @@ function Figure({ progressRef }: { progressRef: { current: number } }) {
   useFrame(() => {
     smoothed.current += (progressRef.current - smoothed.current) * 0.08;
     if (groupRef.current) {
-      groupRef.current.rotation.y = -0.5 + smoothed.current * Math.PI * 1.15;
+      groupRef.current.rotation.y = -0.5 + smoothed.current * ((200 * Math.PI) / 180);
     }
   });
 
@@ -217,7 +217,7 @@ export default function HeroFigureCanvas({
     >
       <Figure progressRef={progressRef} />
       <EffectComposer multisampling={0}>
-        <Bloom intensity={0.45} luminanceThreshold={0.3} luminanceSmoothing={0.6} mipmapBlur />
+        <Bloom intensity={0.2} luminanceThreshold={0.45} luminanceSmoothing={0.3} radius={0.35} />
         <Vignette eskil={false} offset={0.2} darkness={0.85} />
       </EffectComposer>
     </Canvas>

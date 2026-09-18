@@ -16,9 +16,13 @@ const HeroFigureCanvas = dynamic(
   { ssr: false }
 );
 
-// How much accumulated wheel/touch delta (px) it takes to spin the
-// figure through its full turn while the page is locked.
-const ROTATE_DISTANCE = 1600;
+// How much accumulated wheel/key delta (px) it takes to spin the figure
+// through its full turn while the page is locked.
+const ROTATE_DISTANCE = 900;
+// Touch swipes cover far fewer px per gesture than a wheel/trackpad
+// tick, so the same distance felt much longer on mobile — shorter here
+// so it finishes in about the same number of gestures.
+const TOUCH_ROTATE_DISTANCE = 240;
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -57,15 +61,16 @@ export default function Hero() {
     // not e.g. a back-navigation restoring a scroll position).
     if (window.scrollY <= 0) setLocked(true);
 
-    const advance = (delta: number) => {
+    const advance = (delta: number, distance = ROTATE_DISTANCE) => {
       const atTop = window.scrollY <= 0;
-      const finished = progressRef.current >= 1;
-      if (!atTop || (finished && delta > 0)) {
+      const alreadyFinished = progressRef.current >= 1;
+      if (!atTop || (alreadyFinished && delta > 0)) {
         if (document.body.style.overflow === "hidden") setLocked(false);
         return false;
       }
       setLocked(true);
-      progressRef.current = clamp01(progressRef.current + delta / ROTATE_DISTANCE);
+      progressRef.current = clamp01(progressRef.current + delta / distance);
+      if (progressRef.current >= 1 && delta > 0) setLocked(false);
       return true;
     };
 
@@ -81,7 +86,7 @@ export default function Hero() {
       if (touchStartY === null) return;
       const y = e.touches[0]?.clientY ?? touchStartY;
       const delta = touchStartY - y;
-      if (advance(delta)) {
+      if (advance(delta, TOUCH_ROTATE_DISTANCE)) {
         e.preventDefault();
         touchStartY = y;
       } else {
